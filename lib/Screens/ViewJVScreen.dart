@@ -1,0 +1,293 @@
+import 'dart:convert';
+
+import 'package:data_table_2/data_table_2.dart';
+import 'package:financemanager/Constants.dart';
+import 'package:financemanager/Models/JvModel.dart';
+
+import 'package:financemanager/MyColors.dart';
+import 'package:financemanager/Utils.dart';
+import 'package:financemanager/widgets/LedgerDrawer.dart';
+import 'package:financemanager/widgets/TextWidget.dart';
+import 'package:financemanager/widgets/Toolbar.dart';
+import 'package:financemanager/widgets/ToolbarImage.dart';
+import 'package:intl/intl.dart';
+import 'package:http/http.dart'as http;
+
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:intl/intl.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+
+class ViewJVScreen extends StatefulWidget {
+  const ViewJVScreen({super.key});
+
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return ViewJVState();
+  }
+}
+
+class ViewJVState extends State<ViewJVScreen> {
+  final GlobalKey<ScaffoldState> jvKey =
+  GlobalKey<ScaffoldState>();
+  List<JvModel>  results= [
+
+
+
+
+
+  ];
+  TextEditingController fromController = TextEditingController();
+  DateTime openingDate = DateTime.now();
+  String OpeningDate="";
+  TextEditingController ToController = TextEditingController();
+  DateTime closingDate = DateTime.now();
+  String ClosingDate="";
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    EasyLoading.show(
+        status: "Loading"
+
+    );
+
+
+
+    setState(() {
+
+
+      try{
+        getJVList();
+
+      }catch (e){
+        confirmationPopup(context, "An error Occurred.Try again later!");
+
+      }
+
+    });
+
+
+
+  }
+  Future<void> getJVList() async {
+
+    var url = Uri.parse('${Utils.baseUrl}getJv');
+    var response = await http.post(url,body:{"user_id":Utils.USER_ID.toString()}).timeout(const Duration(seconds: 30),onTimeout: (){
+
+      return confirmationPopup(context, "Check your Internet Connection!");
+    });
+
+    if (response.statusCode == 200) {
+      EasyLoading.dismiss();
+      print(response.body);
+      dynamic body = jsonDecode(response.body);
+
+
+      setState(() {
+
+        body.forEach((item){
+          print(item);
+          results.add(JvModel.fromJson(item));
+
+        });
+      });
+
+
+
+
+    } else {
+      EasyLoading.dismiss();
+
+      print(response.statusCode);
+
+
+    }
+  }
+
+
+  @override
+  Widget build(BuildContext context)  {
+    return Scaffold(
+      key: jvKey,
+      appBar:ToolbarBack(appBar: AppBar(
+
+
+      ), title:"New Voucher",
+
+      ),
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+
+        children: [
+
+          Padding(
+            padding: const EdgeInsets.only(left:12.0,right:12.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Row(
+
+                  children: [
+                    TextWidget(
+
+                      input: "Date :  ",
+                      fontsize: 16,
+                      fontWeight: FontWeight.normal,
+                      textcolor: MyColors.blackColor8,
+                    ),
+                    SizedBox(
+                      width: 100,
+                      child: TextField(
+                        controller: fromController,
+                        onTap: () async{
+                          FocusScope.of(context).requestFocus(FocusNode());
+                          await selectFromDate(context);
+                          fromController.text = DateFormat('dd-MM-yyyy').format(openingDate);
+                        },
+                        onChanged: (String value){
+                          OpeningDate=value;
+                        },
+                        style:TextStyle(color: MyColors.blue) ,
+
+                        decoration:InputDecoration(
+                          border: InputBorder.none,
+                          hintText:"${openingDate.day}-${openingDate.month}-${openingDate.year}",
+                          hintStyle: TextStyle(color: MyColors.blue),
+
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                IconButton(onPressed: (){
+
+
+
+                }, icon:Icon(Icons.save,color: MyColors.blue,))
+
+              ],
+            ),
+          ),
+
+          Expanded(
+
+              child: _createDataTable()),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed:() async {
+          await Navigator.pushNamed(context, Constants.addJVScreen);
+          setState(() {
+            results.clear();
+            initState();
+
+
+
+
+          });
+        },
+        tooltip: 'Add',
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  DataTable _createDataTable() {
+    return DataTable2(
+      columns: _createColumns(),
+      rows: _createRows(),
+      columnSpacing: 4,
+      dataRowHeight: 50,
+      horizontalMargin: 5,
+      minWidth: 150,
+
+
+      border: TableBorder.all(color: MyColors.gray),
+      showBottomBorder: true,
+
+      headingTextStyle:
+      const TextStyle(fontWeight: FontWeight.bold, color: Colors.white,),
+      headingRowColor:
+      MaterialStateProperty.resolveWith((states) => MyColors.blue),
+    );
+  }
+
+  List<DataColumn> _createColumns() {
+    return [
+      const DataColumn2(label: Center(child: Text('A/C'))),
+      const DataColumn2(label: Center(child: Text('Description'))),
+      const DataColumn2(label: Center(child: Text('Debit'))),
+      const DataColumn2(label: Center(child: Text('Credit'))),
+
+    ];
+  }
+
+  List<DataRow> _createRows() {
+    return results
+        .map((jv) => DataRow(cells: [
+      DataCell(Center(child: Text(jv.accountName.toString()))),
+      DataCell(Center(child: Text(jv.description.toString()))),
+      DataCell(Center(child: Text(jv.debit.toString()))),
+      DataCell(Center(child: Text(jv.credit.toString()))),
+
+    ]))
+        .toList();
+  }
+  Future<void> selectFromDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: openingDate,
+        firstDate: DateTime(1800),
+        lastDate: DateTime(5500));
+    if (picked != null && picked != openingDate) {
+      setState(() {
+        openingDate = picked;
+        DateFormat formatter = DateFormat('dd-MM-yyyy');
+        OpeningDate = formatter.format(openingDate).toString();
+
+
+      });
+    }
+    else{
+      setState(() {
+
+        DateFormat formatter = DateFormat('dd-MM-yyyy');
+        OpeningDate = formatter.format(openingDate).toString();
+
+
+      });
+
+    }
+
+  }
+  confirmationPopup(BuildContext dialogContext, String? error) {
+
+    var alertStyle = const AlertStyle(
+      animationType: AnimationType.grow,
+      overlayColor: Colors.black87,
+      isCloseButton: true,
+      isOverlayTapDismiss: true,
+      titleStyle: TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
+      descStyle: TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
+      animationDuration: Duration(milliseconds: 400),
+    );
+
+    Alert(context: dialogContext, style: alertStyle, title: error, buttons: [
+      DialogButton(
+        onPressed: () {
+          Navigator.pop(dialogContext);
+        },
+        color: MyColors.redColor,
+        child: const Text(
+          "Try Again",
+          style: TextStyle(color: Colors.white, fontSize: 18),
+        ),
+      )
+    ]).show();
+  }
+
+}
