@@ -50,6 +50,7 @@ class AddPurchaseState extends State<AddPurchaseScreen>{
   TextEditingController totalWeightControllr=TextEditingController();
   TextEditingController lessWeightControllr=TextEditingController();
   TextEditingController netWeightControllr=TextEditingController();
+  int Totalmount=0;
 
   @override
   void initState() {
@@ -464,7 +465,12 @@ class AddPurchaseState extends State<AddPurchaseScreen>{
                 keyboardType: TextInputType.text,
                 value: (val) {
                   purchaseRate = val!;
+
                 },
+                changevalue: (val){
+                  setState(() {
+                    Totalmount=int.parse(netWeightControllr.text)*int.parse(val!);
+                  }); },
                 width: MediaQuery.of(context).size.width,
                 validate: true,
                 isPassword: false,
@@ -524,6 +530,25 @@ class AddPurchaseState extends State<AddPurchaseScreen>{
                   ),
                 ),
 
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextWidget(
+
+                  input: "Total Amount:",
+                  fontsize: 16,
+                  fontWeight: FontWeight.normal,
+                  textcolor: MyColors.blackColor8,
+                ),
+                TextWidget(
+
+                  input: Totalmount.toString(),
+                  fontsize: 16,
+                  fontWeight: FontWeight.normal,
+                  textcolor: MyColors.blue,
+                ),
               ],
             ),
             Utils.FORM_HINT_PADDING,
@@ -607,12 +632,12 @@ class AddPurchaseState extends State<AddPurchaseScreen>{
       return confirmationPopup(context, "Check your Internet Connection!");
     });
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200){
       print(response.body);
       dynamic body = jsonDecode(response.body);
       String status=body['status'];
       String message=body['message'];
-      if(status=="success"){
+      if(status=="sucess"){
 
         Fluttertoast.showToast(
             msg: message,
@@ -623,8 +648,9 @@ class AddPurchaseState extends State<AddPurchaseScreen>{
             textColor: Colors.white,
             fontSize: 16.0
         );
-        bl.close();
         Navigator.pop(context);
+        bl.close();
+
       }
       else{
         bl.close();

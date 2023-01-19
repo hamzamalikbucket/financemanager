@@ -1,4 +1,5 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:financemanager/Constants.dart';
 import 'package:financemanager/Models/LedgerModel.dart';
 import 'package:financemanager/MyColors.dart';
 import 'package:financemanager/widgets/LedgerDrawer.dart';
@@ -6,6 +7,11 @@ import 'package:financemanager/widgets/TextWidget.dart';
 import 'package:financemanager/widgets/ToolbarImage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:pdf/pdf.dart';
+
+import 'dart:io';
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:typed_data';
 
 class LedgerScreen extends StatefulWidget {
   const LedgerScreen({super.key});
@@ -18,6 +24,7 @@ class LedgerScreen extends StatefulWidget {
 }
 
 class LedgerState extends State<LedgerScreen> {
+
   List<LedgerModel> results = [
     LedgerModel(
         "1", "22-09-2023", "description", "15", "800", "100", "100", "0"),
@@ -63,7 +70,9 @@ class LedgerState extends State<LedgerScreen> {
       ),
       body: _createDataTable(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pushNamed(context, Constants.AddAccountScreen);
+        },
         tooltip: 'Add',
         child: const Icon(Icons.picture_as_pdf),
       ),
@@ -71,7 +80,9 @@ class LedgerState extends State<LedgerScreen> {
   }
 
   DataTable _createDataTable() {
-    return DataTable2(
+    return
+
+      DataTable2(
       columns: _createColumns(),
       rows: _createRows(),
       columnSpacing: 4,

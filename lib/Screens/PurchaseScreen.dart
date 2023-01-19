@@ -6,6 +6,7 @@ import 'package:financemanager/Models/AccountModel.dart';
 import 'package:financemanager/Models/PurchaseModel.dart';
 import 'package:financemanager/MyColors.dart';
 import 'package:financemanager/Screens/EditAccountScreen.dart';
+import 'package:financemanager/Screens/PurchaseDetail.dart';
 import 'package:financemanager/Utils.dart';
 import 'package:financemanager/widgets/BtnNullHeightWidth.dart';
 import 'package:financemanager/widgets/TextWidget.dart';
@@ -27,12 +28,11 @@ class PurchaseScreen extends StatefulWidget {
 }
 
 class PurchaseState extends State<PurchaseScreen> {
-  List<PurchaseModel> purchases = [
-    PurchaseModel("purchaseId", "itemTitle", "supplierTitle", "containerTitle", "description", "totalWeight", "lessWeight", "netWeight", "purchaseRate", "1908888")
-  ];
+
+  List<AccountModel> purchases = [];
   late BottomLoader bl;
 
-/*  @override
+  @override
   void initState() {
     // TODO: implement initState
 
@@ -45,7 +45,7 @@ class PurchaseState extends State<PurchaseScreen> {
         confirmationPopup(context, "An error Occurred.Try again later!");
       }
     });
-  }*/
+  }
 
   Future<void> getAccountList() async {
     var url = Uri.parse('${Utils.baseUrl}getAccounts');
@@ -63,6 +63,7 @@ class PurchaseState extends State<PurchaseScreen> {
       setState(() {
         body.forEach((item) {
           print(item);
+          purchases.add(AccountModel.fromJson(item));
 
         });
       });
@@ -98,17 +99,18 @@ class PurchaseState extends State<PurchaseScreen> {
                 shrinkWrap: false,
                 physics: const AlwaysScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
-                  PurchaseModel purchaseModel = purchases[index];
+                  AccountModel purchaseModel = purchases[index];
                   return GestureDetector(
-                    /* onTap: (){
+                     onTap: (){
                         Navigator.push(context,
                           MaterialPageRoute(
-                            builder: (context) => OrderDetail(),
+                            builder: (context) => PurchaseDetailScreen(),
                             settings: RouteSettings(
-                              arguments: od,
+                              arguments: purchases[index],
+
                             ),
                           ),);
-                      },*/
+                      },
 
                     child: Container(
                       child: Card(
@@ -128,7 +130,7 @@ class PurchaseState extends State<PurchaseScreen> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   TextWidget(
-                                      input: purchaseModel.supplierTitle!,
+                                      input: purchaseModel.Title!,
                                       fontsize: 15,
                                       fontWeight: FontWeight.w600,
                                       textcolor: MyColors.blackColor8),
@@ -205,7 +207,7 @@ class PurchaseState extends State<PurchaseScreen> {
                               ),
                               Utils.FORM_HINT_PADDING,
 
-                              Row(
+                            /*  Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   TextWidget(
@@ -214,7 +216,7 @@ class PurchaseState extends State<PurchaseScreen> {
                                       fontWeight: FontWeight.bold,
                                       textcolor: MyColors.blackColor8),
                                 ],
-                              ),
+                              ),*/
 
                               Utils.FORM_HINT_PADDING,
                               Divider(

@@ -44,6 +44,7 @@ class AddSaleState extends State<AddSaleScreen>{
   var customertitle;
   var containertitle;
   late BottomLoader bl;
+  int Totalmount=0;
 
   List<AccountModel>account=[];
   List<ItemModel>items=[];
@@ -625,7 +626,7 @@ class AddSaleState extends State<AddSaleScreen>{
       dynamic body = jsonDecode(response.body);
       String status=body['status'];
       String message=body['message'];
-      if(status=="success"){
+      if(status=="sucess"){
 
         Fluttertoast.showToast(
             msg: message,

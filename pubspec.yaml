@@ -46,6 +46,7 @@ dependencies:
   http: ^0.13.5
   flutter_easyloading: ^3.0.5
   data_table_2: ^2.3.10
+  pdf: ^3.8.4
 
 dev_dependencies:
   flutter_test:

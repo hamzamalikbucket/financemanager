@@ -10,6 +10,7 @@ import 'package:financemanager/widgets/LedgerDrawer.dart';
 import 'package:financemanager/widgets/TextWidget.dart';
 import 'package:financemanager/widgets/Toolbar.dart';
 import 'package:financemanager/widgets/ToolbarImage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart'as http;
 
@@ -164,6 +165,16 @@ class ViewJVState extends State<ViewJVScreen> {
                 ),
 
                 IconButton(onPressed: (){
+                  Fluttertoast.showToast(
+                      msg: "Voucher Saved",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.SNACKBAR,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor:MyColors.blue,
+                      textColor: Colors.white,
+                      fontSize: 16.0
+                  );
+                  Navigator.pop(context);
 
 
 

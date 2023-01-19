@@ -191,6 +191,106 @@ class HomeState extends State<HomeScreen>{
                               MainAxisAlignment.spaceBetween,
                               children: [
                                 TextWidget(
+                                    input: "Debit",
+                                    fontsize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    textcolor: MyColors.whiteColor),
+                                Image.asset(
+                                  "assets/images/earnings.png",
+                                  height: 30,
+                                  width: 30,
+                                  color: MyColors.whiteColor,
+                                ),
+                              ],
+                            ),
+                            TextWidget(
+                                input:Debit!
+                                    .toString(),
+                                fontsize: 20,
+                                fontWeight: FontWeight.w700,
+                                textcolor: MyColors.whiteColor),
+
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 80,
+                    width: 180,
+                    child: Card(
+                      color: MyColors.facebook_button_color,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          side: BorderSide(
+                              color: MyColors.nocolor, width: 1.0)),
+                      elevation: 25,
+                      child: Padding(
+                        padding: const EdgeInsets.all(3.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                              children: [
+                                TextWidget(
+                                    input: "Credit",
+                                    fontsize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    textcolor: MyColors.whiteColor),
+                                Image.asset(
+                                  "assets/images/earnings.png",
+                                  height: 30,
+                                  width: 30,
+                                  color: MyColors.whiteColor,
+                                ),
+
+                              ],
+                            ),
+                            TextWidget(
+                                input: Credit!.toString(),
+                                fontsize: 20,
+                                fontWeight: FontWeight.w700,
+                                textcolor: MyColors.whiteColor),
+
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Utils.FORM_HINT_PADDING,
+              Utils.FORM_HINT_PADDING,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    height: 80,
+                    width: 180,
+                    child: Card(
+                      color: MyColors.blue,
+                      elevation: 25,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          side: BorderSide(
+                              color: MyColors.blue,
+                              width: 1.0)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(3.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                              children: [
+                                TextWidget(
                                     input: "Purchase",
                                     fontsize: 16,
                                     fontWeight: FontWeight.bold,
@@ -363,106 +463,7 @@ class HomeState extends State<HomeScreen>{
               ),
               Utils.FORM_HINT_PADDING,
               Utils.FORM_HINT_PADDING,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    height: 80,
-                    width: 180,
-                    child: Card(
-                      color: MyColors.blue,
-                      elevation: 25,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          side: BorderSide(
-                              color: MyColors.blue,
-                              width: 1.0)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(3.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
-                              children: [
-                                TextWidget(
-                                    input: "Debit",
-                                    fontsize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    textcolor: MyColors.whiteColor),
-                                Image.asset(
-                                  "assets/images/earnings.png",
-                                  height: 30,
-                                  width: 30,
-                                  color: MyColors.whiteColor,
-                                ),
-                              ],
-                            ),
-                            TextWidget(
-                                input:Debit!
-                                .toString(),
-                                fontsize: 20,
-                                fontWeight: FontWeight.w700,
-                                textcolor: MyColors.whiteColor),
 
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 80,
-                    width: 180,
-                    child: Card(
-                      color: MyColors.facebook_button_color,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          side: BorderSide(
-                              color: MyColors.nocolor, width: 1.0)),
-                      elevation: 25,
-                      child: Padding(
-                        padding: const EdgeInsets.all(3.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
-                              children: [
-                                TextWidget(
-                                    input: "Credit",
-                                    fontsize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    textcolor: MyColors.whiteColor),
-                                Image.asset(
-                                  "assets/images/earnings.png",
-                                  height: 30,
-                                  width: 30,
-                                  color: MyColors.whiteColor,
-                                ),
-
-                              ],
-                            ),
-                            TextWidget(
-                                input: Credit!.toString(),
-                                fontsize: 20,
-                                fontWeight: FontWeight.w700,
-                                textcolor: MyColors.whiteColor),
-
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Utils.FORM_HINT_PADDING,
-              Utils.FORM_HINT_PADDING,
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

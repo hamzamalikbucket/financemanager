@@ -17,6 +17,7 @@ class Constants{
   static const addJVScreen='addJVScreen';
   static const purchaseScreen='purchaseScreen';
   static const addPurchaseScreen='addPurchaseScreen';
+  static const purchaseDetailScreen='purchaseDetailScreen';
   static const saleScreen='saleScreen';
   static const addSaleScreen='addSaleScreen';
   static const containerScreen='containerScreen';
@@ -25,5 +26,6 @@ class Constants{
   static const viewexpenses='viewexpenses';
   static const viewOtherexpenses='viewOtherexpenses';
   static const addOtherexpenses='addOtherexpenses';
+  static const pdfledger='pdfledger';
 
 }

@@ -7,6 +7,7 @@ import 'package:financemanager/Models/PurchaseModel.dart';
 import 'package:financemanager/Models/SaleModel.dart';
 import 'package:financemanager/MyColors.dart';
 import 'package:financemanager/Screens/EditAccountScreen.dart';
+import 'package:financemanager/Screens/SaleDetailScreen.dart';
 import 'package:financemanager/Utils.dart';
 import 'package:financemanager/widgets/BtnNullHeightWidth.dart';
 import 'package:financemanager/widgets/TextWidget.dart';
@@ -28,14 +29,10 @@ class SaleScreen extends StatefulWidget {
 }
 
 class SaleState extends State<SaleScreen> {
-  List<SaleModel> saleItems = [
-    SaleModel("purchaseId", "itemTitle", "supplierTitle", "containerTitle", "description", "totalWeight", "lessWeight", "netWeight", "purchaseRate", "customerTitle", "totalAmount"),
-    SaleModel("purchaseId", "itemTitle", "supplierTitle", "containerTitle", "description", "totalWeight", "lessWeight", "netWeight", "purchaseRate", "customerTitle", "totalAmount"),
-
-  ];
+  List<AccountModel> saleItems = [];
   late BottomLoader bl;
 
-/*  @override
+  @override
   void initState() {
     // TODO: implement initState
 
@@ -48,7 +45,7 @@ class SaleState extends State<SaleScreen> {
         confirmationPopup(context, "An error Occurred.Try again later!");
       }
     });
-  }*/
+  }
 
   Future<void> getAccountList() async {
     var url = Uri.parse('${Utils.baseUrl}getAccounts');
@@ -66,6 +63,7 @@ class SaleState extends State<SaleScreen> {
       setState(() {
         body.forEach((item) {
           print(item);
+          saleItems.add(AccountModel.fromJson(item));
 
         });
       });
@@ -101,17 +99,17 @@ class SaleState extends State<SaleScreen> {
                 shrinkWrap: false,
                 physics: const AlwaysScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
-                  SaleModel saleModel = saleItems[index];
+                  AccountModel saleModel = saleItems[index];
                   return GestureDetector(
-                    /* onTap: (){
+                     onTap: (){
                         Navigator.push(context,
                           MaterialPageRoute(
-                            builder: (context) => OrderDetail(),
+                            builder: (context) => SaleDetailScreen(),
                             settings: RouteSettings(
-                              arguments: od,
+                              arguments: saleItems[index],
                             ),
                           ),);
-                      },*/
+                      },
 
                     child: Container(
                       child: Card(
@@ -131,84 +129,16 @@ class SaleState extends State<SaleScreen> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   TextWidget(
-                                      input: saleModel.customerTitle!,
+                                      input: saleModel.Title!,
                                       fontsize: 15,
                                       fontWeight: FontWeight.w600,
                                       textcolor: MyColors.blackColor8),
-                                  /* SizedBox(
-                                    child: Row(
-                                      children: [
-                                        IconButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => EditAccountScreen(),
-                                                settings: RouteSettings(
-                                                  arguments: purchases[index],
-                                                ),
-                                              ),
-                                            ).then((value) {
-                                              purchases.clear();
-                                              initState();
-                                            });
 
-
-                                          },
-                                          icon: Icon(
-                                            Icons.edit_note,
-                                            color: MyColors.blue,
-                                            size: 20,
-                                          ),
-                                        ),
-                                        IconButton(
-                                          onPressed: () async {
-                                            EasyLoading.show(status: "Loading");
-                                            var url = Uri.parse(
-                                                '${Utils.baseUrl}deleteAccount');
-                                            var response = await http
-                                                .post(url, body: {
-                                              "id": purchaseModel.purchaseId
-                                            }).timeout(const Duration(seconds: 30),
-                                                onTimeout: () {
-                                                  return confirmationPopup(context,
-                                                      "Check your Internet Connection!");
-                                                });
-
-                                            if (response.statusCode == 200) {
-                                              EasyLoading.dismiss();
-                                              print(response.body);
-                                              dynamic body =
-                                              jsonDecode(response.body);
-                                              String status = body['status'];
-                                              if (status == "success") {
-                                                setState(() {
-                                                  purchases.removeAt(index);
-                                                });
-                                              } else {
-                                                String error = body['message'];
-                                                confirmationPopup(context, error);
-                                              }
-                                            } else {
-                                              EasyLoading.dismiss();
-
-                                              print(response.statusCode);
-                                            }
-                                          },
-                                          icon: Icon(
-                                            Icons.delete_forever,
-                                            color: MyColors.bin_red_color,
-                                            size: 15,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),*/
                                 ],
                               ),
                               Utils.FORM_HINT_PADDING,
 
-                              Row(
+                              /*Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   TextWidget(
@@ -217,7 +147,7 @@ class SaleState extends State<SaleScreen> {
                                       fontWeight: FontWeight.bold,
                                       textcolor: MyColors.blackColor8),
                                 ],
-                              ),
+                              ),*/
 
                               Utils.FORM_HINT_PADDING,
                               Divider(

@@ -8,6 +8,7 @@ class PurchaseModel {
       lessWeight,
       netWeight,
       purchaseRate,
+      purchaseDate,
       totalAmount;
 
   PurchaseModel(
@@ -20,5 +21,8 @@ class PurchaseModel {
       this.lessWeight,
       this.netWeight,
       this.purchaseRate,
+      this.purchaseDate,
       this.totalAmount);
+  factory PurchaseModel.fromJson(Map<String, dynamic> json){
+    return PurchaseModel(json['id'].toString(), json['item_name'], json['title'], json['container_name'], json['description'], json['total_weight'], json['less_weight'], json['net_weight'], json['rate'], json['op_date'], json['total_amount']);}
 }
