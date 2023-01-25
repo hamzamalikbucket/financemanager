@@ -7,6 +7,7 @@ import 'package:financemanager/Screens/AddJvScreen.dart';
 import 'package:financemanager/Screens/AddPaymentScreen.dart';
 import 'package:financemanager/Screens/AddPurchaseScreen.dart';
 import 'package:financemanager/Screens/AddSaleScreen.dart';
+import 'package:financemanager/Screens/EditAccountScreen.dart';
 import 'package:financemanager/Screens/HomeScreen.dart';
 import 'package:financemanager/Screens/ItemScreen.dart';
 import 'package:financemanager/Screens/JournalVoucherScreen.dart';
@@ -80,6 +81,7 @@ class MyApp extends StatelessWidget {
           Constants.homeScreen: (context) =>const HomeScreen(),
           Constants.AccountScreen: (context) =>AccountScreen(),
           Constants.AddAccountScreen: (context) =>AddAccountScreen(),
+          Constants.editAccount: (context) =>EditAccountScreen(),
           Constants.PaymentScreen: (context) =>PaymentScreen(),
           Constants.addPaymentScreen: (context) =>AddPaymentScreen(),
           Constants.recieptScreen: (context) =>ReceiptScreen(),

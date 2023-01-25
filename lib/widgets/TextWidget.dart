@@ -19,7 +19,7 @@ class TextWidget extends StatelessWidget {
     return
       Text(input,
       textAlign: TextAlign.justify,
-      style: GoogleFonts.syne(
+      style: GoogleFonts.cairo(
         fontSize: fontsize,
         fontWeight: fontWeight,
         color: textcolor,

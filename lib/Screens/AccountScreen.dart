@@ -27,9 +27,20 @@ class AccountState extends State<AccountScreen> {
   List<AccountModel> account = [];
   late BottomLoader bl;
 
+  List<AccountModel> _foundUsers = [];
+
+  Offset _tapPosition = Offset.zero;
+  void _getTapPosition(TapDownDetails details) {
+    final RenderBox referenceBox = context.findRenderObject() as RenderBox;
+    setState(() {
+      _tapPosition = referenceBox.globalToLocal(details.globalPosition);
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
+
 
     EasyLoading.show(status: "Loading");
 
@@ -39,6 +50,26 @@ class AccountState extends State<AccountScreen> {
       } catch (e) {
         confirmationPopup(context, "An error Occurred.Try again later!");
       }
+    });
+  }
+
+  // This function is called whenever the text field changes
+  void _runFilter(String enteredKeyword) {
+    List<AccountModel> results = [];
+    if (enteredKeyword.isEmpty) {
+      // if the search field is empty or only contains white-space, we'll display all users
+      results = account;
+    } else {
+      results = account
+          .where((user) =>
+          user.Title!.toLowerCase().contains(enteredKeyword.toLowerCase()))
+          .toList();
+      // we use the toLowerCase() method to make it case-insensitive
+    }
+
+    // Refresh the UI
+    setState(() {
+      _foundUsers = results;
     });
   }
 
@@ -59,6 +90,16 @@ class AccountState extends State<AccountScreen> {
         body.forEach((item) {
           print(item);
           account.add(AccountModel.fromJson(item));
+          _foundUsers=account;
+          _foundUsers.sort((a,b){
+           return  a.Title.toString().compareTo(b.Title.toString());
+
+
+          });
+
+
+
+
         });
       });
     } else {
@@ -70,9 +111,24 @@ class AccountState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final RenderObject? overlay =
+    Overlay.of(context)?.context.findRenderObject();
     return Scaffold(
-      appBar: ToolbarImage(
-        appBar: AppBar(),
+      appBar: AppBar(
+        title: Column(
+          children: [
+            TextField(
+
+              onChanged: (value) => _runFilter(value),
+              style: TextStyle(color: Colors.white),
+              showCursor: true,
+              decoration: const InputDecoration(
+
+                  labelText: 'Search',labelStyle: TextStyle(color: Colors.white), suffixIcon: Icon(Icons.search,color: Colors.white,)),
+            ),
+          ],
+        ),
+
       ),
       body: Center(
         child: Container(
@@ -86,14 +142,16 @@ class AccountState extends State<AccountScreen> {
                 account.clear();
                 return getAccountList();
               },
-              child: ListView.builder(
-                itemCount: account.length,
+              child:_foundUsers.isNotEmpty? ListView.builder(
+                itemCount: _foundUsers.length,
                 addRepaintBoundaries: true,
                 scrollDirection: Axis.vertical,
                 shrinkWrap: false,
-                physics: AlwaysScrollableScrollPhysics(),
+
+                physics: const AlwaysScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
-                  AccountModel accountmodle = account[index];
+                  AccountModel accountmodle = _foundUsers[index];
+
                   return GestureDetector(
                     /* onTap: (){
                         Navigator.push(context,
@@ -104,144 +162,127 @@ class AccountState extends State<AccountScreen> {
                             ),
                           ),);
                       },*/
+                    onLongPress: (){
 
-                    child: Container(
-                      child: Card(
-                        color: MyColors.whiteColor,
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            side: BorderSide(
-                                color: MyColors.blackColor24, width: 1.0)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  TextWidget(
-                                      input: accountmodle.Title!,
-                                      fontsize: 15,
-                                      fontWeight: FontWeight.w600,
-                                      textcolor: MyColors.blackColor8),
-                                  SizedBox(
-                                    child: Row(
-                                      children: [
-                                        IconButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => EditAccountScreen(),
-                                                settings: RouteSettings(
-                                                  arguments: account[index],
-                                                ),
-                                              ),
-                                            ).then((value) {
-                                              account.clear();
-                                              initState();
-                                            });
+                      showMenu(context: context, position: RelativeRect.fromRect(
+                          Rect.fromLTWH(_tapPosition.dx, _tapPosition.dy, 180, 180),
+                          Rect.fromLTWH(50, 50, overlay!.paintBounds.size.width,
+                              overlay.paintBounds.size.height)),
+                          items:<PopupMenuEntry>[
+                      PopupMenuItem(
+                        value: account[index],
+                        onTap: ()async{
+                          Navigator.pushNamed(context, Constants.AddAccountScreen);
 
+                        },
 
-                                          },
-                                          icon: Icon(
-                                            Icons.edit_note,
-                                            color: MyColors.blue,
-                                            size: 20,
-                                          ),
-                                        ),
-                                        IconButton(
-                                          onPressed: () async {
-                                            EasyLoading.show(status: "Loading");
-                                            var url = Uri.parse(
-                                                '${Utils.baseUrl}deleteAccount');
-                                            var response = await http
-                                                .post(url, body: {
-                                              "id": accountmodle.AccountId
-                                            }).timeout(const Duration(seconds: 30),
-                                                onTimeout: () {
-                                                  return confirmationPopup(context,
-                                                      "Check your Internet Connection!");
-                                                });
-
-                                            if (response.statusCode == 200) {
-                                              EasyLoading.dismiss();
-                                              print(response.body);
-                                              dynamic body =
-                                              jsonDecode(response.body);
-                                              String status = body['status'];
-                                              if (status == "success") {
-                                                setState(() {
-                                                  account.removeAt(index);
-                                                });
-                                              } else {
-                                                String error = body['message'];
-                                                confirmationPopup(context, error);
-                                              }
-                                            } else {
-                                              EasyLoading.dismiss();
-
-                                              print(response.statusCode);
-                                            }
-                                          },
-                                          icon: Icon(
-                                            Icons.delete_forever,
-                                            color: MyColors.bin_red_color,
-                                            size: 15,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Utils.FORM_HINT_PADDING,
-
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  TextWidget(
-                                      input: "Opening Balance:" +
-                                          accountmodle.OpeningBalance!,
-                                      fontsize: 10,
-                                      fontWeight: FontWeight.bold,
-                                      textcolor: MyColors.blackColor8),
-                                  TextWidget(
-                                      input: "Phone #:" +
-                                          accountmodle.PhoneNumber!,
-                                      fontsize: 10,
-                                      fontWeight: FontWeight.bold,
-                                      textcolor: MyColors.blackColor8),
-                                ],
-                              ),
-                              Utils.FORM_HINT_PADDING,
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  TextWidget(
-                                      input: "Opening Date:" +
-                                          accountmodle.OpeningDate!.toString(),
-                                      fontsize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      textcolor: MyColors.blackColor8),
-
-                                ],
-                              ),
-                              Utils.FORM_HINT_PADDING,
-                              Divider(
-                                thickness: 2.0,
-                                color: MyColors.blue,
-                              ),
-                            ],
-                          ),
-                        ),
+                        child: const Text("Edit"),
                       ),
-                    ),
+                      PopupMenuItem(
+                      value: this.account[index],
+                        onTap: ()async{
+                          EasyLoading.show(status: "Loading");
+                          var url = Uri.parse(
+                              '${Utils.baseUrl}deleteAccount');
+                          var response = await http
+                              .post(url, body: {
+                            "id": accountmodle.AccountId
+                          }).timeout(const Duration(seconds: 30),
+                              onTimeout: () {
+                                return confirmationPopup(context,
+                                    "Check your Internet Connection!");
+                              });
+
+                          if (response.statusCode == 200) {
+                            EasyLoading.dismiss();
+                            print(response.body);
+                            dynamic body =
+                            jsonDecode(response.body);
+                            String status = body['status'];
+                            if (status == "success") {
+                              setState(() {
+                                account.removeAt(index);
+                              });
+                            } else {
+                              String error = body['message'];
+                              confirmationPopup(context, error);
+                            }
+                          } else {
+                            EasyLoading.dismiss();
+
+                            print(response.statusCode);
+                          }
+                        },
+                        child: const Text("Delete"),
+                      ),
+                      PopupMenuItem(
+
+                      value: account[index],
+                        child: const Text("Ledger"),
+                      ),
+                      ],
+
+
+                      );
+
+
+                    },
+
+
+                    child:SizedBox(
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: CircleAvatar(
+                              radius:30.0 ,
+                              backgroundColor: MyColors.orangeColor,
+                              child:  TextWidget(
+                                  input: accountmodle.Title![0],
+                                  fontsize: 20,
+                                  fontWeight: FontWeight.w300,
+                                  textcolor: MyColors.whiteColor),
+
+                            ),
+                            title: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextWidget(
+                                    input: accountmodle.Title!,
+                                    fontsize: 20,
+                                    fontWeight: FontWeight.w800,
+                                    textcolor: MyColors.blackColor8),
+                                TextWidget(
+                                    input: "Balance:" +
+                                        accountmodle.OpeningBalance!,
+                                    fontsize: 10,
+                                    fontWeight: FontWeight.normal,
+                                    textcolor: MyColors.blackColor8),
+
+
+
+                              ],
+                            )
+
+                          ),
+                          Divider(
+                            thickness: 1.0,
+                            color: MyColors.gray,
+                          ),
+                        ],
+                      ),
+                    )
+
+
+
+
                   );
+
                 },
+              ): const Center(
+                child: Text(
+                  'No results found',
+                  style: TextStyle(fontSize: 24),
+                ),
               ),
             ),
           ),
@@ -285,5 +326,47 @@ class AccountState extends State<AccountScreen> {
         ),
       )
     ]).show();
+  }
+  void _showContextMenu(BuildContext context) async {
+    final RenderObject? overlay =
+    Overlay.of(context)?.context.findRenderObject();
+
+    final result = await showMenu(
+        context: context,
+
+        // Show the context menu at the tap location
+        position: RelativeRect.fromRect(
+            Rect.fromLTWH(_tapPosition.dx, _tapPosition.dy, 30, 30),
+            Rect.fromLTWH(0, 0, overlay!.paintBounds.size.width,
+                overlay.paintBounds.size.height)),
+
+        // set a list of choices for the context menu
+        items: [
+          const PopupMenuItem(
+            value: 'Edit',
+            child: Text('Edit'),
+          ),
+          const PopupMenuItem(
+            value: 'Delete',
+            child: Text('Delete'),
+          ),
+          const PopupMenuItem(
+            value: 'Ledger',
+            child: Text('Ledger'),
+          ),
+        ]);
+
+    // Implement the logic for each choice here
+    switch (result) {
+      case 'favorites':
+        debugPrint('Add To Favorites');
+        break;
+      case 'comment':
+        debugPrint('Write Comment');
+        break;
+      case 'hide':
+        debugPrint('Hide');
+        break;
+    }
   }
 }

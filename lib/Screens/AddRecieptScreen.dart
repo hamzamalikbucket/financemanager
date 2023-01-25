@@ -5,7 +5,7 @@ import 'package:financemanager/Models/AccountModel.dart';
 import 'package:financemanager/MyColors.dart';
 import 'package:financemanager/Utils.dart';
 import 'package:financemanager/widgets/BtnNullHeightWidth.dart';
-import 'package:financemanager/widgets/EmailInputWidget.dart';
+
 import 'package:financemanager/widgets/NameInputWidget.dart';
 import 'package:financemanager/widgets/TextWidget.dart';
 import 'package:financemanager/widgets/Toolbar.dart';
@@ -294,6 +294,7 @@ class AddRecState extends State<AddReceiptScreen>{
                     setState(() {
                       DateFormat formatter = DateFormat('dd-MM-yyyy');
                       OpeningDate = formatter.format(openingdate).toString();
+                      print(OpeningDate.toString());
 
                     });
 
@@ -335,7 +336,7 @@ class AddRecState extends State<AddReceiptScreen>{
       dynamic body = jsonDecode(response.body);
       String status=body['status'];
       String message=body['message'];
-      if(status=="success"){
+      if(status=="sucess"){
 
         Fluttertoast.showToast(
             msg: message,

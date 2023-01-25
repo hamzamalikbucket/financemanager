@@ -9,13 +9,13 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import '../Constants.dart';
 import '../MyColors.dart';
 import '../Utils.dart';
-import '../widgets/BtnImg.dart';
+
 import '../widgets/BtnNullHeightWidth.dart';
 import '../widgets/EmailInputWidget.dart';
 import '../widgets/NameInputWidget.dart';
 import '../widgets/TextWidget.dart';
-import '../widgets/Toolbar.dart';
-import 'package:http/http.dart'as http;
+
+import 'package:http/http.dart' as http;
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -29,7 +29,6 @@ class Login extends StatefulWidget {
 class LoginState extends State<Login> {
   final GlobalKey<FormState> _SignKey = GlobalKey<FormState>();
 
-  bool _isSigningIn = false;
   late String email, pass, message;
   late BottomLoader bl;
   void initState() {
@@ -48,6 +47,7 @@ class LoginState extends State<Login> {
             fontSize: 19.0,
             fontWeight: FontWeight.w600));
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +70,7 @@ class LoginState extends State<Login> {
                           children: [
                             Image.asset(
                               'assets/images/logo.png',
-
+                              width: 170,
                             ),
                             TextWidget(
                                 input: "Login to your account to continue",
@@ -80,12 +80,9 @@ class LoginState extends State<Login> {
                           ],
                         ),
                       ),
-
                       SizedBox(child: form(context)),
                       Utils.FORM_HINT_PADDING,
                       Utils.FORM_HINT_PADDING,
-
-
                     ],
                   ),
                 ),
@@ -96,6 +93,7 @@ class LoginState extends State<Login> {
       ),
     );
   }
+
   Widget form(BuildContext context) {
     return Form(
         key: _SignKey,
@@ -133,7 +131,6 @@ class LoginState extends State<Login> {
                 hintcolour: MyColors.whiteColor),
             Utils.FORM_HINT_PADDING,
             Utils.FORM_HINT_PADDING,
-
             BtnNullHeightWidth(
               title: "Login",
               bgcolour: MyColors.blue,
@@ -145,14 +142,13 @@ class LoginState extends State<Login> {
                 if (form.validate()) {
                   bl.display();
 
-                  try{
+                  try {
                     login();
-                  }catch (e){
+                  } catch (e) {
                     bl.close();
-                    confirmationPopup(context, "An error Occurred.Try again later!");
+                    confirmationPopup(
+                        context, "An error Occurred.Try again later!");
                   }
-
-
                 }
               },
               width: MediaQuery.of(context).size.width,
@@ -169,9 +165,8 @@ class LoginState extends State<Login> {
                     fontWeight: FontWeight.w500,
                     textcolor: MyColors.black),
                 GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     Navigator.pushNamed(context, Constants.signUpScreen);
-
                   },
                   child: TextWidget(
                       input: "Sign Up",
@@ -184,16 +179,14 @@ class LoginState extends State<Login> {
           ],
         ));
   }
+
   Future<dynamic> login() async {
-    String token;
-    var url = Uri.parse(Utils.baseUrl +'login');
-    var response = await http
-        .post(
+
+    var url = Uri.parse(Utils.baseUrl + 'login');
+    var response = await http.post(
       url,
       body: {"email": email, "password": pass},
-
-    )
-        .timeout(const Duration(seconds: 30),onTimeout: (){
+    ).timeout(const Duration(seconds: 30), onTimeout: () {
       bl.close();
       return confirmationPopup(context, "Check your Internet Connection!");
     });
@@ -201,33 +194,31 @@ class LoginState extends State<Login> {
     if (response.statusCode == 200) {
       print(response.body);
       dynamic body = jsonDecode(response.body);
-      dynamic status=body['status'];
+      dynamic status = body['status'];
 
-      if(status=="success" ){
+      if (status == "success") {
         String message = body['message'];
-        dynamic data=body['user'];
-        Utils.USER_EMAIL=data['email'];
-        Utils.USER_First_NAME=data['name'];
-        Utils.USER_ID=data['id'].toString();
+        dynamic data = body['user'];
+        Utils.USER_EMAIL = data['email'];
+        Utils.USER_First_NAME = data['name'];
+        Utils.USER_ID = data['id'].toString();
         print(Utils.USER_ID);
         Fluttertoast.showToast(
             msg: message,
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.SNACKBAR,
             timeInSecForIosWeb: 1,
-            backgroundColor:MyColors.blue,
+            backgroundColor: MyColors.blue,
             textColor: Colors.white,
-            fontSize: 16.0
-        );
+            fontSize: 16.0);
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (BuildContext context) => HomeScreen(),
           ),
-              (route) => false,
+          (route) => false,
         );
-      }
-      else{
+      } else {
         bl.close();
         print(response.body);
         dynamic body = jsonDecode(response.body);
@@ -235,11 +226,7 @@ class LoginState extends State<Login> {
         print(error);
 
         confirmationPopup(context, error);
-
       }
-
-
-
     } else {
       bl.close();
       print(response.body);
@@ -253,7 +240,6 @@ class LoginState extends State<Login> {
   }
 
   confirmationPopup(BuildContext dialogContext, String? error) {
-
     var alertStyle = const AlertStyle(
       animationType: AnimationType.grow,
       overlayColor: Colors.black87,

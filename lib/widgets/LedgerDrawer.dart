@@ -26,8 +26,7 @@ class LedgerDrawer extends StatelessWidget {
               icon: Image.asset("assets/images/earnings.png",color: MyColors.whiteColor),
               text: 'Credit',
               onTap: () {
-                /*Navigator.pushNamed(context, Constants.homeScreen);
-                */
+               /* Navigator.pushNamed(context, Constants.);*/
               }
 
             ),
@@ -43,8 +42,9 @@ class LedgerDrawer extends StatelessWidget {
             _createDrawerItem(
               icon: Image.asset("assets/images/sellers.png",color: MyColors.whiteColor),
               text: 'Sale',
-              onTap: () =>
+              onTap: ()
                   {
+                    Navigator.pushNamed(context, Constants.addSaleScreen);
 
                   }
             ),
@@ -53,6 +53,7 @@ class LedgerDrawer extends StatelessWidget {
                 icon: Image.asset("assets/images/order.png",color: MyColors.whiteColor),
                 text: 'Purchase',
                 onTap: (){
+                  Navigator.pushNamed(context, Constants.addPurchaseScreen);
 
 
 

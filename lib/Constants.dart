@@ -27,5 +27,6 @@ class Constants{
   static const viewOtherexpenses='viewOtherexpenses';
   static const addOtherexpenses='addOtherexpenses';
   static const pdfledger='pdfledger';
+  static const editAccount='editAccount';
 
 }

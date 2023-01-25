@@ -2,7 +2,7 @@
     package="com.example.financemanager">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="financemanager"
+        android:label="Logo pk"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

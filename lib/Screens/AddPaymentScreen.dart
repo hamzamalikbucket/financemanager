@@ -357,7 +357,7 @@ class AddPayState extends State<AddPaymentScreen>{
       dynamic body = jsonDecode(response.body);
       String status=body['status'];
       String message=body['message'];
-      if(status=="success"){
+      if(status=="sucess"){
 
         Fluttertoast.showToast(
             msg: message,

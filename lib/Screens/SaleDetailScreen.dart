@@ -103,7 +103,7 @@ class DetailState extends State<SaleDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    accountModel= ModalRoute.of(context)!.settings.arguments as AccountModel;
+
     return Scaffold(
       appBar: ToolbarImage(
         appBar: AppBar(),
@@ -141,8 +141,8 @@ class DetailState extends State<SaleDetailScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             TextWidget(
-                                input: "PIN-:${saleModel.purchaseId!}",
-                                fontsize: 10,
+                                input: "SIN-:${saleModel.purchaseId!}",
+                                fontsize: 15,
                                 fontWeight: FontWeight.bold,
                                 textcolor: MyColors.blackColor8),
 
@@ -155,7 +155,7 @@ class DetailState extends State<SaleDetailScreen> {
                             TextWidget(
                                 input: saleModel.containerTitle!,
                                 fontsize: 15,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w800,
                                 textcolor: MyColors.blackColor8),
                             TextWidget(
                                 input: saleModel.saleDate!,
@@ -172,17 +172,17 @@ class DetailState extends State<SaleDetailScreen> {
                           children: [
                             TextWidget(
                                 input: "item Name:${saleModel.itemTitle!}",
-                                fontsize: 10,
+                                fontsize: 15,
                                 fontWeight: FontWeight.bold,
                                 textcolor: MyColors.blackColor8),
                             TextWidget(
                                 input: "item weight:${saleModel.netWeight!}",
-                                fontsize: 10,
+                                fontsize: 15,
                                 fontWeight: FontWeight.bold,
                                 textcolor: MyColors.blackColor8),
                             TextWidget(
                                 input: "item rate:${saleModel.purchaseRate!}",
-                                fontsize: 10,
+                                fontsize: 15,
                                 fontWeight: FontWeight.bold,
                                 textcolor: MyColors.blackColor8),
                           ],
@@ -194,8 +194,8 @@ class DetailState extends State<SaleDetailScreen> {
                           children: [
                             TextWidget(
                                 input: "Total Amount:${saleModel.totalAmount!}",
-                                fontsize: 10,
-                                fontWeight: FontWeight.bold,
+                                fontsize: 15,
+                                fontWeight: FontWeight.w600,
                                 textcolor: MyColors.blackColor8),
                           ],
                         ),

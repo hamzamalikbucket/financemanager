@@ -152,7 +152,7 @@ class DetailState extends State<PurchaseDetailScreen> {
                             children: [
                               TextWidget(
                                   input: "PIN-:${purchaseModel.purchaseId!}",
-                                  fontsize: 10,
+                                  fontsize: 15,
                                   fontWeight: FontWeight.bold,
                                   textcolor: MyColors.blackColor8),
 
@@ -165,7 +165,7 @@ class DetailState extends State<PurchaseDetailScreen> {
                               TextWidget(
                                   input: purchaseModel.containerTitle!,
                                   fontsize: 15,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w800,
                                   textcolor: MyColors.blackColor8),
                               TextWidget(
                                   input: purchaseModel.purchaseDate!,
@@ -182,17 +182,17 @@ class DetailState extends State<PurchaseDetailScreen> {
                             children: [
                               TextWidget(
                                   input: "item Name:${purchaseModel.itemTitle!}",
-                                  fontsize: 10,
+                                  fontsize: 15,
                                   fontWeight: FontWeight.bold,
                                   textcolor: MyColors.blackColor8),
                               TextWidget(
                                   input: "item weight:${purchaseModel.netWeight!}",
-                                  fontsize: 10,
+                                  fontsize: 15,
                                   fontWeight: FontWeight.bold,
                                   textcolor: MyColors.blackColor8),
                               TextWidget(
                                   input: "item rate:${purchaseModel.purchaseRate!}",
-                                  fontsize: 10,
+                                  fontsize: 15,
                                   fontWeight: FontWeight.bold,
                                   textcolor: MyColors.blackColor8),
                             ],
@@ -204,8 +204,8 @@ class DetailState extends State<PurchaseDetailScreen> {
                             children: [
                               TextWidget(
                                   input: "Total Amount:${purchaseModel.totalAmount!}",
-                                  fontsize: 10,
-                                  fontWeight: FontWeight.bold,
+                                  fontsize: 15,
+                                  fontWeight: FontWeight.w600,
                                   textcolor: MyColors.blackColor8),
                             ],
                           ),

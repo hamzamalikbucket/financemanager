@@ -7,7 +7,7 @@ import 'package:financemanager/Models/ItemModel.dart';
 import 'package:financemanager/MyColors.dart';
 import 'package:financemanager/Utils.dart';
 import 'package:financemanager/widgets/BtnNullHeightWidth.dart';
-import 'package:financemanager/widgets/EmailInputWidget.dart';
+
 import 'package:financemanager/widgets/NameInputWidget.dart';
 import 'package:financemanager/widgets/TextWidget.dart';
 import 'package:financemanager/widgets/Toolbar.dart';
@@ -19,7 +19,6 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart'as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
 
-import '../Constants.dart';
 
 class AddPurchaseScreen extends StatefulWidget{
   const AddPurchaseScreen({super.key});
@@ -207,11 +206,15 @@ class AddPurchaseState extends State<AddPurchaseScreen>{
           child: Padding(
             padding: const EdgeInsets.all(Utils.APP_PADDING),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset(
-                  "assets/images/logo.png",),
+                  "assets/images/logo.png",
+                width: 170,
+                ),
+                Utils.FORM_HINT_PADDING,
+                Utils.FORM_HINT_PADDING,
                 form(context),
 
 

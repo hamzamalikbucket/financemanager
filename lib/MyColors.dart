@@ -4,7 +4,7 @@ class MyColors{
   static Color primaryColor = colorFromHex("#005294");
   static Color black = colorFromHex("#000000");
   static Color orangeColor = colorFromHex('#FC832B');
-  static Color gray = colorFromHex('#505050');
+  static Color gray = colorFromHex('#999999');
   static Color blue = colorFromHex('#4CAECF');
 
   static Color redColor = colorFromHex('#FF5050');
