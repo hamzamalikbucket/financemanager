@@ -30,18 +30,33 @@ class PaymentScreen extends StatefulWidget{
 }
 class PaymentState extends State<PaymentScreen>{
   List<PaymentModel>payy=[];
+  List<PaymentModel> _foundUsers=[];
   TextEditingController FromController = TextEditingController();
   DateTime openingdate = DateTime.now();
   String OpeningDate="";
   TextEditingController ToController = TextEditingController();
   DateTime closingdate = DateTime.now();
   String ClosingDate="";
+
   Offset _tapPosition = Offset.zero;
   void _getTapPosition(TapDownDetails details) {
     final RenderBox referenceBox = context.findRenderObject() as RenderBox;
     setState(() {
       _tapPosition = referenceBox.globalToLocal(details.globalPosition);
     });
+  }
+  RelativeRect _getRelativeRect(GlobalKey key){
+    return RelativeRect.fromSize(
+        _getWidgetGlobalRect(key), const Size(200, 200));
+  }
+
+  Rect _getWidgetGlobalRect(GlobalKey key) {
+    final RenderBox renderBox =
+    key.currentContext!.findRenderObject() as RenderBox;
+    var offset = renderBox.localToGlobal(Offset.zero);
+    debugPrint('Widget position: ${offset.dx} ${offset.dy}');
+    return Rect.fromLTWH(offset.dx / 3.1, offset.dy * 1.05,
+        renderBox.size.width, renderBox.size.height);
   }
 
 
@@ -72,6 +87,24 @@ class PaymentState extends State<PaymentScreen>{
 
 
   }
+  void _runFilter(String enteredKeyword) {
+    List<PaymentModel> results = [];
+    if (enteredKeyword.isEmpty) {
+      // if the search field is empty or only contains white-space, we'll display all users
+      results = payy;
+    } else {
+      results = payy
+          .where((user) =>
+          user.AccountTitle!.toLowerCase().contains(enteredKeyword.toLowerCase())||user.Amount!.contains(enteredKeyword.toString())||user.Date!.contains(enteredKeyword.toString()))
+          .toList();
+      // we use the toLowerCase() method to make it case-insensitive
+    }
+
+    // Refresh the UI
+    setState(() {
+      _foundUsers = results;
+    });
+  }
   Future<void> getPaymentList() async {
 
     var url = Uri.parse('${Utils.baseUrl}getPayment');
@@ -91,6 +124,7 @@ class PaymentState extends State<PaymentScreen>{
         body.forEach((item){
           print(item);
           payy.add(PaymentModel.fromJson(item));
+          _foundUsers=payy;
 
         });
       });
@@ -111,7 +145,22 @@ class PaymentState extends State<PaymentScreen>{
     final RenderObject? overlay =
     Overlay.of(context)?.context.findRenderObject();
     return Scaffold(
-      appBar: ToolbarBack(appBar: AppBar(),title: "Payment",),
+      appBar:AppBar(
+    title: Column(
+    children: [
+    TextField(
+
+        onChanged: (value) => _runFilter(value),
+    style: TextStyle(color: Colors.white),
+    showCursor: true,
+    decoration: const InputDecoration(
+
+    labelText: 'Search-Date-Name-Amount',labelStyle: TextStyle(color: Colors.white), suffixIcon: Icon(Icons.search,color: Colors.white,)),
+    ),
+    ],
+    ),
+
+    ),
       body: Center(
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -126,7 +175,7 @@ class PaymentState extends State<PaymentScreen>{
               },
               child: Column(
                 children: [
-                  Padding(
+                  /*Padding(
                     padding: const EdgeInsets.only(left:12.0,right:12.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -202,45 +251,29 @@ class PaymentState extends State<PaymentScreen>{
 
                       ],
                     ),
-                  ),
+                  ),*/
                   Expanded(
-                    child: payy.isNotEmpty?
+                    child: _foundUsers.isNotEmpty?
                     ListView.builder(
-                      itemCount: payy.length,
+                      itemCount: _foundUsers.length,
                       addRepaintBoundaries: true,
                       scrollDirection:Axis.vertical,
                       shrinkWrap: false,
                       physics: AlwaysScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
-                        PaymentModel paymodel = payy[index];
+                        PaymentModel paymodel = _foundUsers[index];
                         return GestureDetector(
-                          /* onTap: (){
-                              Navigator.push(context,
-                                MaterialPageRoute(
-                                  builder: (context) => OrderDetail(),
-                                  settings: RouteSettings(
-                                    arguments: od,
-                                  ),
-                                ),);
-                            },*/
+
                           onLongPress: (){
-
-                            showMenu(context: context, position: RelativeRect.fromRect(
-                                Rect.fromLTWH(_tapPosition.dx, _tapPosition.dy, 180, 180),
-                                Rect.fromLTWH(50, 50, overlay!.paintBounds.size.width,
-                                    overlay.paintBounds.size.height)),
-                              items:<PopupMenuEntry>[
+                            showMenu(context: context,  position:RelativeRect.fromLTRB(100, 100, 100, 100),
+                              items:[
                                 PopupMenuItem(
-                                  value: payy[index],
-                                  onTap: (){
-
-
-                                  },
+                                  value: "1",
 
                                   child: const Text("Edit"),
                                 ),
                                 PopupMenuItem(
-                                  value: this.payy[index],
+                                  value: "2",
                                   onTap: ()async{
                                     EasyLoading.show(status: "Loading");
                                     var url = Uri.parse(
@@ -276,14 +309,29 @@ class PaymentState extends State<PaymentScreen>{
                                   },
                                   child: Text("Delete"),
                                 ),
-                                PopupMenuItem(
-                                  value: payy[index],
-                                  child: const Text("Ledger"),
-                                ),
+
                               ],
 
 
-                            );
+
+                            ).then<void>((String? itemSelected){
+                              if(itemSelected==null){
+                                return null;
+                              }
+                              if(itemSelected =="1"){
+                                Navigator.push(context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditPaymentScreen(),
+                                    settings: RouteSettings(
+                                      arguments: payy[index],
+                                    ),
+                                  ),);
+                                //code here
+                              }else{
+                                //code here
+                              }
+
+                            });
                           },
 
 

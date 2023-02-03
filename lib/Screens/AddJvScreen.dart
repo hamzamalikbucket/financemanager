@@ -123,21 +123,18 @@ class AddJvState extends State<AddJvScreen>{
       appBar: ToolbarBack(appBar: AppBar(), title: 'Entry',),
       body: SafeArea(
 
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(Utils.APP_PADDING),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(
-                  "assets/images/logo.png",),
-                form(context),
+        child: Padding(
+          padding: const EdgeInsets.all(Utils.APP_PADDING),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+
+              form(context),
 
 
 
-              ],
-            ),
+            ],
           ),
         ),
       ),

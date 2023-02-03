@@ -125,21 +125,19 @@ class EditPayState extends State<EditPaymentScreen>{
       appBar: ToolbarBack(appBar: AppBar(), title: paymentmodel.AccountTitle!,),
       body: SafeArea(
 
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(Utils.APP_PADDING),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(
-                  "assets/images/logo.png",),
-                form(context),
+        child: Padding(
+          padding: const EdgeInsets.all(Utils.APP_PADDING),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+
+              form(context),
 
 
 
-              ],
-            ),
+            ],
           ),
         ),
       ),

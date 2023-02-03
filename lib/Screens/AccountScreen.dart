@@ -5,6 +5,7 @@ import 'package:financemanager/Constants.dart';
 import 'package:financemanager/Models/AccountModel.dart';
 import 'package:financemanager/MyColors.dart';
 import 'package:financemanager/Screens/EditAccountScreen.dart';
+import 'package:financemanager/Screens/LedgerScreen.dart';
 import 'package:financemanager/Utils.dart';
 import 'package:financemanager/widgets/BtnNullHeightWidth.dart';
 import 'package:financemanager/widgets/TextWidget.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -28,6 +30,10 @@ class AccountState extends State<AccountScreen> {
   late BottomLoader bl;
 
   List<AccountModel> _foundUsers = [];
+  DateTime openingdate = DateTime.now();
+  DateTime closingDate = DateTime.now();
+  String ClosingDate = "";
+  String OpeningDate = "";
 
   Offset _tapPosition = Offset.zero;
   void _getTapPosition(TapDownDetails details) {
@@ -35,6 +41,19 @@ class AccountState extends State<AccountScreen> {
     setState(() {
       _tapPosition = referenceBox.globalToLocal(details.globalPosition);
     });
+  }
+  RelativeRect _getRelativeRect(GlobalKey key){
+    return RelativeRect.fromSize(
+        _getWidgetGlobalRect(key), const Size(200, 200));
+  }
+
+  Rect _getWidgetGlobalRect(GlobalKey key) {
+    final RenderBox renderBox =
+    key.currentContext!.findRenderObject() as RenderBox;
+    var offset = renderBox.localToGlobal(Offset.zero);
+    debugPrint('Widget position: ${offset.dx} ${offset.dy}');
+    return Rect.fromLTWH(offset.dx / 3.1, offset.dy * 1.05,
+        renderBox.size.width, renderBox.size.height);
   }
 
   @override
@@ -44,7 +63,12 @@ class AccountState extends State<AccountScreen> {
 
     EasyLoading.show(status: "Loading");
 
+
+
     setState(() {
+      DateFormat formatter = DateFormat('yyyy-MM-dd');
+      OpeningDate = formatter.format(openingdate).toString();
+      ClosingDate = formatter.format(closingDate).toString();
       try {
         getAccountList();
       } catch (e) {
@@ -111,6 +135,7 @@ class AccountState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final widgetKey = GlobalKey();
     final RenderObject? overlay =
     Overlay.of(context)?.context.findRenderObject();
     return Scaffold(
@@ -132,6 +157,7 @@ class AccountState extends State<AccountScreen> {
       ),
       body: Center(
         child: Container(
+
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           color: MyColors.whiteColor,
@@ -142,7 +168,8 @@ class AccountState extends State<AccountScreen> {
                 account.clear();
                 return getAccountList();
               },
-              child:_foundUsers.isNotEmpty? ListView.builder(
+              child:_foundUsers.isNotEmpty?
+              ListView.builder(
                 itemCount: _foundUsers.length,
                 addRepaintBoundaries: true,
                 scrollDirection: Axis.vertical,
@@ -153,33 +180,20 @@ class AccountState extends State<AccountScreen> {
                   AccountModel accountmodle = _foundUsers[index];
 
                   return GestureDetector(
-                    /* onTap: (){
-                        Navigator.push(context,
-                          MaterialPageRoute(
-                            builder: (context) => OrderDetail(),
-                            settings: RouteSettings(
-                              arguments: od,
-                            ),
-                          ),);
-                      },*/
+
                     onLongPress: (){
 
-                      showMenu(context: context, position: RelativeRect.fromRect(
-                          Rect.fromLTWH(_tapPosition.dx, _tapPosition.dy, 180, 180),
-                          Rect.fromLTWH(50, 50, overlay!.paintBounds.size.width,
-                              overlay.paintBounds.size.height)),
-                          items:<PopupMenuEntry>[
-                      PopupMenuItem(
-                        value: account[index],
-                        onTap: ()async{
-                          Navigator.pushNamed(context, Constants.AddAccountScreen);
+                      showMenu<String>(context: context,
+                        position:RelativeRect.fromLTRB(100, 100, 100, 100),
+                          items:[
+                      PopupMenuItem<String>(
+                        value: "1",
 
-                        },
 
                         child: const Text("Edit"),
                       ),
                       PopupMenuItem(
-                      value: this.account[index],
+                      value: "2",
                         onTap: ()async{
                           EasyLoading.show(status: "Loading");
                           var url = Uri.parse(
@@ -217,13 +231,46 @@ class AccountState extends State<AccountScreen> {
                       ),
                       PopupMenuItem(
 
-                      value: account[index],
+
+                      value: "3",
                         child: const Text("Ledger"),
                       ),
                       ],
 
 
-                      );
+                      ).then<void>((String? itemSelected){
+                        if(itemSelected==null){
+                          return null;
+                        }
+                        if(itemSelected =="1"){
+                          Navigator.push(context,
+                            MaterialPageRoute(
+                              builder: (context) => EditAccountScreen(),
+                              settings: RouteSettings(
+                                arguments: account[index],
+                              ),
+                            ),);
+                          //code here
+                        }else if(itemSelected == "3"){
+                          Navigator.push(context,
+                            MaterialPageRoute(
+                              builder: (context) => LedgerScreen(),
+                              settings: RouteSettings(
+                                arguments: {
+                                  "id":accountmodle.AccountId,
+                                  "account name":accountmodle.Title.toString(),
+                                  "from date":OpeningDate.toString(),
+                                  "to date":ClosingDate.toString(),
+                                },
+
+                              ),
+                            ),);
+                          //code here
+                        }else{
+                          //code here
+                        }
+
+                      });
 
 
                     },
@@ -237,7 +284,7 @@ class AccountState extends State<AccountScreen> {
                               radius:30.0 ,
                               backgroundColor: MyColors.orangeColor,
                               child:  TextWidget(
-                                  input: accountmodle.Title![0],
+                                  input: accountmodle.Title![0].toUpperCase(),
                                   fontsize: 20,
                                   fontWeight: FontWeight.w300,
                                   textcolor: MyColors.whiteColor),

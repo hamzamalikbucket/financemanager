@@ -26,7 +26,7 @@ class LedgerDrawer extends StatelessWidget {
               icon: Image.asset("assets/images/earnings.png",color: MyColors.whiteColor),
               text: 'Credit',
               onTap: () {
-               /* Navigator.pushNamed(context, Constants.);*/
+                Navigator.pushNamed(context, Constants.addReceiptScreen);
               }
 
             ),
@@ -35,7 +35,7 @@ class LedgerDrawer extends StatelessWidget {
               icon: Image.asset("assets/images/earnings.png",color: MyColors.whiteColor),
               text: 'Debit',
               onTap: () {
-                 // Navigator.pushNamed(context, Constants.homeScreen);
+                Navigator.pushNamed(context, Constants.addPaymentScreen);
               }
             ),
 

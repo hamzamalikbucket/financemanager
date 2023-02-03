@@ -56,25 +56,19 @@ class AddAState extends State<AddContainerScreen>{
       appBar: ToolbarBack(appBar: AppBar(), title: 'New Container',),
       body: SafeArea(
 
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(Utils.APP_PADDING),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset(
-                  "assets/images/logo.png",
+        child: Padding(
+          padding: const EdgeInsets.all(Utils.APP_PADDING),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
 
-
-                ),
-                form(context),
+              form(context),
 
 
 
-              ],
-            ),
+            ],
           ),
         ),
       ),

@@ -40,7 +40,8 @@ class DetailState extends State<SaleDetailScreen> {
 
     setState(() {
       try {
-        saledetail.clear();
+
+
 
       } catch (e) {
         confirmationPopup(context, "An error Occurred.Try again later!");
@@ -53,10 +54,6 @@ class DetailState extends State<SaleDetailScreen> {
     accountModel= ModalRoute.of(context)!.settings.arguments as AccountModel;
 
     setState(() {
-
-      saledetail.clear();
-
-
       try{
         getPurchaseDetail();
 
@@ -86,6 +83,7 @@ class DetailState extends State<SaleDetailScreen> {
       dynamic body = jsonDecode(response.body);
 
       setState(() {
+        saledetail.clear();
         body.forEach((item) {
           print(item);
           saledetail.add(SaleModel.fromJson(item));
@@ -103,6 +101,7 @@ class DetailState extends State<SaleDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    accountModel= ModalRoute.of(context)!.settings.arguments as AccountModel;
 
     return Scaffold(
       appBar: ToolbarImage(
@@ -123,7 +122,7 @@ class DetailState extends State<SaleDetailScreen> {
             physics: const AlwaysScrollableScrollPhysics(),
             itemBuilder: (context, index) {
               SaleModel saleModel = saledetail[index];
-              return Container(
+              return SizedBox(
                 child: Card(
                   color: MyColors.whiteColor,
                   elevation: 2,

@@ -120,21 +120,19 @@ class AddPayState extends State<AddPaymentScreen>{
       appBar: ToolbarBack(appBar: AppBar(), title: 'New Payment',),
       body: SafeArea(
 
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(Utils.APP_PADDING),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(
-                  "assets/images/logo.png",),
-                form(context),
+        child: Padding(
+          padding: const EdgeInsets.all(Utils.APP_PADDING),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+
+              form(context),
 
 
 
-              ],
-            ),
+            ],
           ),
         ),
       ),

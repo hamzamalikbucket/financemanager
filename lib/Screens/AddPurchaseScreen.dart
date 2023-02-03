@@ -50,6 +50,7 @@ class AddPurchaseState extends State<AddPurchaseScreen>{
   TextEditingController lessWeightControllr=TextEditingController();
   TextEditingController netWeightControllr=TextEditingController();
   int Totalmount=0;
+  int netweig=0;
 
   @override
   void initState() {
@@ -207,14 +208,9 @@ class AddPurchaseState extends State<AddPurchaseScreen>{
             padding: const EdgeInsets.all(Utils.APP_PADDING),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.max,
               children: [
-                Image.asset(
-                  "assets/images/logo.png",
-                width: 170,
-                ),
-                Utils.FORM_HINT_PADDING,
-                Utils.FORM_HINT_PADDING,
+
                 form(context),
 
 
@@ -425,7 +421,12 @@ class AddPurchaseState extends State<AddPurchaseScreen>{
                 keyboardType: TextInputType.text,
                 value: (val) {
                   lessWeight = val!;
+
                 },
+    changevalue: (val){
+    netWeightControllr.text=(int.parse(totalWeightControllr.text)-int.parse(lessWeightControllr.text)).toString();
+
+    },
                 width: MediaQuery.of(context).size.width,
                 validate: true,
                 isPassword: false,
@@ -438,15 +439,8 @@ class AddPurchaseState extends State<AddPurchaseScreen>{
                 title: "Net Weight",
                 error: "Enter weight",
                 isRequired: true,
-
+                isenabled: false,
                 controller: netWeightControllr,
-                changevalue: (val){
-                  netWeightControllr.text=(int.parse(totalWeightControllr.text)-int.parse(lessWeightControllr.text)).toString();
-
-                },
-
-
-
                 icon: Icons.payment,
                 keyboardType: TextInputType.text,
                 value: (val) {
@@ -583,6 +577,7 @@ class AddPurchaseState extends State<AddPurchaseScreen>{
                   }
                   print(openingDateString);
                   print(Desc);
+                  print(netWeight);
 
 
                   try{

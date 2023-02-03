@@ -45,6 +45,7 @@ class AddSaleState extends State<AddSaleScreen>{
   var containertitle;
   late BottomLoader bl;
   int Totalmount=0;
+  int remWeight=0;
 
   List<AccountModel>account=[];
   List<ItemModel>items=[];
@@ -211,8 +212,9 @@ class AddSaleState extends State<AddSaleScreen>{
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset(
-                  "assets/images/logo.png",),
+
+                Utils.FORM_HINT_PADDING,
+                Utils.FORM_HINT_PADDING,
                 form(context),
 
 
@@ -421,6 +423,10 @@ class AddSaleState extends State<AddSaleScreen>{
                 value: (val) {
                   lessWeight = val!;
                 },
+                changevalue: (val){
+                  netWeightControllr.text=(int.parse(totalWeightControllr.text)-int.parse(lessWeightControllr.text)).toString();
+
+                },
                 width: MediaQuery.of(context).size.width,
                 validate: true,
                 isPassword: false,
@@ -433,16 +439,9 @@ class AddSaleState extends State<AddSaleScreen>{
                 title: "Net Weight",
                 error: "Enter weight",
                 isRequired: true,
-
                 controller: netWeightControllr,
-                changevalue: (val){
-                  netWeightControllr.text=(int.parse(totalWeightControllr.text)-int.parse(lessWeightControllr.text)).toString();
-
-                },
-
-
-
                 icon: Icons.payment,
+                isenabled: false,
                 keyboardType: TextInputType.text,
                 value: (val) {
                   netWeight = val!;
@@ -548,7 +547,7 @@ class AddSaleState extends State<AddSaleScreen>{
               bgcolour: MyColors.blue,
               textcolour: MyColors.whiteColor,
               onPress: () {
-                //(is_teacher)?Navigator.pushReplacementNamed(context, Constants.signup_page),
+
                 final form = puraddKey.currentState;
                 form!.save();
                 if (form.validate()) {
