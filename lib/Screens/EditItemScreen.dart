@@ -1,3 +1,4 @@
+import 'package:financemanager/Models/ItemModel.dart';
 import 'package:financemanager/MyColors.dart';
 import 'package:financemanager/Utils.dart';
 import 'package:financemanager/widgets/BtnNullHeightWidth.dart';
@@ -15,7 +16,7 @@ import 'dart:convert';
 import 'package:bottom_loader/bottom_loader.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
-class AddAccountScreen extends StatefulWidget{
+class EditItemScreen extends StatefulWidget{
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -24,13 +25,14 @@ class AddAccountScreen extends StatefulWidget{
 
 
 }
-class AddAState extends State<AddAccountScreen>{
+class AddAState extends State<EditItemScreen>{
   final GlobalKey<FormState> AddKey = GlobalKey<FormState>();
   late BottomLoader bl;
   late String Title, balance,Phone,Date;
   TextEditingController FromController = TextEditingController();
-  DateTime openingdate = DateTime.now();
- String OpeningDate="";
+  late ItemModel im;
+
+
   @override
   void initState() {
     super.initState();
@@ -51,26 +53,25 @@ class AddAState extends State<AddAccountScreen>{
   }
   @override
   Widget build(BuildContext context) {
+    im= ModalRoute.of(context)!.settings.arguments as ItemModel;
     return Scaffold(
 
-      appBar: ToolbarBack(appBar: AppBar(), title: 'New Account',),
+      appBar: ToolbarBack(appBar: AppBar(), title: 'Edit Item',),
       body: SafeArea(
 
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(Utils.APP_PADDING),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
+        child: Padding(
+          padding: const EdgeInsets.all(Utils.APP_PADDING),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
 
-                form(context),
-
+              form(context),
 
 
-              ],
-            ),
+
+            ],
           ),
         ),
       ),
@@ -84,10 +85,11 @@ class AddAState extends State<AddAccountScreen>{
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             NameInputWidget(
-                title: "Title",
-                error: "Enter Account Title",
+                title: "Item Name",
+                error: "Enter Item Name",
                 isRequired: true,
                 icon: Icons.title,
+                initialval: im.ItemName,
                 keyboardType: TextInputType.text,
                 value: (val) {
                   Title = val!;
@@ -98,73 +100,10 @@ class AddAState extends State<AddAccountScreen>{
                 hintcolour: MyColors.whiteColor),
             Utils.FORM_HINT_PADDING,
             Utils.FORM_HINT_PADDING,
-            NameInputWidget(
-                title: "Opening balance",
-                error: "Enter Opening balance",
-                isRequired: true,
-                icon: Icons.account_balance,
-                keyboardType: TextInputType.text,
-                value: (val) {
-                  balance = val!;
-                },
-                width: MediaQuery.of(context).size.width,
-                validate: true,
-                isPassword: false,
-                hintcolour: MyColors.whiteColor),
-
             Utils.FORM_HINT_PADDING,
             Utils.FORM_HINT_PADDING,
-            NameInputWidget(
-                title: "Phone",
-                error: "Enter Phone Number",
-                isRequired: false,
-                icon: Icons.phone,
-                keyboardType: TextInputType.number,
-                value: (val) {
-                  Phone = val!;
-                },
-                width: MediaQuery.of(context).size.width,
-                validate: false,
-                isPassword: false,
-                hintcolour: MyColors.whiteColor),
 
-            Utils.FORM_HINT_PADDING,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                TextWidget(
 
-                  input: "Date",
-                  fontsize: 16,
-                  fontWeight: FontWeight.normal,
-                  textcolor: MyColors.blackColor8,
-                ),
-                Container(
-                  width: 100,
-                  child: TextField(
-                    controller: FromController,
-                    onTap: () async{
-                      FocusScope.of(context).requestFocus(new FocusNode());
-                      await selectfromdate(context);
-                      FromController.text = DateFormat('yyyy-MM-dd').format(openingdate);
-                    },
-                    onChanged: (String value){
-                      OpeningDate=value;
-                    },
-                    style:TextStyle(color: MyColors.blue) ,
-
-                    decoration:InputDecoration(
-                      border: InputBorder.none,
-                      hintText:openingdate.year.toString()+"-"+openingdate.month.toString()+"-"+openingdate.day.toString(),
-                      hintStyle: TextStyle(color: MyColors.blue),
-
-                    ),
-                  ),
-                ),
-
-              ],
-            ),
-            Utils.FORM_HINT_PADDING,
 
 
             BtnNullHeightWidth(
@@ -177,22 +116,10 @@ class AddAState extends State<AddAccountScreen>{
                 form!.save();
                 if (form.validate()) {
                   bl.display();
-                  if(Phone.isEmpty){
-                    setState(() {
-                      Phone="0";
-                    });
-                  }
-                  if(OpeningDate.isEmpty){
-                    setState(() {
-                      DateFormat formatter = DateFormat('dd-MM-yyyy');
-                      OpeningDate = formatter.format(openingdate);
 
-                    });
-
-                  }
 
                   try{
-                   addAccount();
+                    editItem();
                   }catch (e){
                     bl.close();
                     confirmationPopup(context, "An error Occurred.Try again later!");
@@ -213,29 +140,13 @@ class AddAState extends State<AddAccountScreen>{
           ],
         ));
   }
-  Future<void> selectfromdate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: openingdate,
-        firstDate: DateTime(1800),
-        lastDate: DateTime(5500));
-    if (picked != null && picked != openingdate) {
-      setState(() {
-        openingdate = picked;
-        DateFormat formatter = DateFormat('dd-MM-yyyy');
-        OpeningDate = formatter.format(openingdate).toString();
 
-
-      });
-    }
-
-  }
-  Future<dynamic> addAccount() async {
-    var url = Uri.parse(Utils.baseUrl +'addAccount');
+  Future<dynamic> editItem() async {
+    var url = Uri.parse('${Utils.baseUrl}editItem');
     var response = await http
         .post(
       url,
-      body: {"gid": Utils.USER_ID, "title": Title,"balance":balance,"op_date":OpeningDate.toString(),"phone":Phone},
+      body: {"title": Title,"user_id":Utils.USER_ID.toString(),"id":im.ItemId},
 
     )
         .timeout(const Duration(seconds: 60),onTimeout: (){
@@ -247,8 +158,9 @@ class AddAState extends State<AddAccountScreen>{
       print(response.body);
       dynamic body = jsonDecode(response.body);
       String status=body['status'];
-      String message=body['message'];
+
       if(status=="sucess"){
+        String message=body['message'];
 
         Fluttertoast.showToast(
             msg: message,

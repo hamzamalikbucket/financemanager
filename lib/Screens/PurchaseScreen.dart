@@ -10,6 +10,7 @@ import 'package:financemanager/Screens/PurchaseDetail.dart';
 import 'package:financemanager/Utils.dart';
 import 'package:financemanager/widgets/BtnNullHeightWidth.dart';
 import 'package:financemanager/widgets/TextWidget.dart';
+import 'package:financemanager/widgets/Toolbar.dart';
 import 'package:financemanager/widgets/ToolbarImage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -77,9 +78,7 @@ class PurchaseState extends State<PurchaseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ToolbarImage(
-        appBar: AppBar(),
-      ),
+        appBar: ToolbarBack(appBar: AppBar(), title: 'Purchase Invoice',),
       body: Center(
         child: Container(
           width: MediaQuery.of(context).size.width,

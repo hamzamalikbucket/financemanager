@@ -45,13 +45,20 @@ dependencies:
   intl: ^0.17.0
   http: ^0.13.5
   flutter_easyloading: ^3.0.5
-  data_table_2: ^2.3.10
-  pdf: ^3.8.4
+
+  pdf: ^3.9.0
   modal_bottom_sheet: ^2.1.2
   permission_handler: ^10.2.0
   dio: ^4.0.6
   flutter_pdfview: ^1.2.5
   scrollable_table_view: ^1.0.1
+
+  file_picker: ^5.2.5
+  open_filex: ^4.3.2
+  ffi: ^2.0.1
+
+
+
 
 
 

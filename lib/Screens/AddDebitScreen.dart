@@ -19,25 +19,23 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 
 import '../Constants.dart';
 
-class AddJvScreen extends StatefulWidget{
-  const AddJvScreen({super.key});
-
+class AddDebitScreen extends StatefulWidget{
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return AddJvState();
+    return AddPayState();
   }
 
 
 }
-class AddJvState extends State<AddJvScreen>{
-  final GlobalKey<FormState> addJvKey = GlobalKey<FormState>();
+class AddPayState extends State<AddDebitScreen>{
+  final GlobalKey<FormState> PayKey = GlobalKey<FormState>();
 
-  late String  Debit,Desc,Date,Credit;
-  TextEditingController fromController = TextEditingController();
+  late String  Amount,Desc,Date;
+  TextEditingController FromController = TextEditingController();
   DateTime openingDate = DateTime.now();
   String openingDateString="";
-  var title;
+   var title;
   late BottomLoader bl;
 
   List<AccountModel>account=[];
@@ -115,12 +113,11 @@ class AddJvState extends State<AddJvScreen>{
 
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
 
-      appBar: ToolbarBack(appBar: AppBar(), title: 'Entry',),
+      appBar: ToolbarBack(appBar: AppBar(), title: 'Debit',),
       body: SafeArea(
 
         child: SingleChildScrollView(
@@ -145,7 +142,7 @@ class AddJvState extends State<AddJvScreen>{
   }
   Widget form(BuildContext context) {
     return Form(
-        key: addJvKey,
+        key: PayKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -178,7 +175,7 @@ class AddJvState extends State<AddJvScreen>{
                   style: TextStyle(
                       color: MyColors.blue,
                       fontSize: 14,
-                      fontWeight: FontWeight.w600),
+                  fontWeight: FontWeight.w600),
                   isDense: true,
 
 
@@ -205,29 +202,13 @@ class AddJvState extends State<AddJvScreen>{
             Utils.FORM_HINT_PADDING,
             Utils.FORM_HINT_PADDING,
             NameInputWidget(
-                title: "Debit",
+                title: "Amount",
                 error: "Enter amount",
                 isRequired: true,
                 icon: Icons.payment,
                 keyboardType: TextInputType.text,
                 value: (val) {
-                  Debit = val!;
-                },
-                width: MediaQuery.of(context).size.width,
-                validate: true,
-                isPassword: false,
-                hintcolour: MyColors.whiteColor),
-
-            Utils.FORM_HINT_PADDING,
-            Utils.FORM_HINT_PADDING,
-            NameInputWidget(
-                title: "Credit",
-                error: "Enter amount",
-                isRequired: true,
-                icon: Icons.payment,
-                keyboardType: TextInputType.text,
-                value: (val) {
-                  Credit = val!;
+                  Amount = val!;
                 },
                 width: MediaQuery.of(context).size.width,
                 validate: true,
@@ -262,17 +243,17 @@ class AddJvState extends State<AddJvScreen>{
                   fontWeight: FontWeight.normal,
                   textcolor: MyColors.blackColor8,
                 ),
-                SizedBox(
+                Container(
                   width: 100,
                   child: TextField(
                     style: TextStyle(
                       color: MyColors.blue,
                     ),
-                    controller: fromController,
+                    controller: FromController,
                     onTap: () async{
                       FocusScope.of(context).requestFocus(FocusNode());
                       await selectfromdate(context);
-                      fromController.text = DateFormat('dd-MM-yyyy').format(openingDate);
+                      FromController.text = DateFormat('dd-MM-yyyy').format(openingDate);
                     },
                     onChanged: (String value){
                       openingDateString=value;
@@ -299,7 +280,7 @@ class AddJvState extends State<AddJvScreen>{
               textcolour: MyColors.whiteColor,
               onPress: () {
                 //(is_teacher)?Navigator.pushReplacementNamed(context, Constants.signup_page),
-                final form = addJvKey.currentState;
+                final form = PayKey.currentState;
                 form!.save();
                 if (form.validate()) {
                   print(title);
@@ -322,7 +303,7 @@ class AddJvState extends State<AddJvScreen>{
 
 
                   try{
-                    addJournal();
+                    addPayment();
                   }catch (e){
                     bl.close();
                     confirmationPopup(context, "An error Occurred.Try again later!");
@@ -358,7 +339,64 @@ class AddJvState extends State<AddJvScreen>{
     }
 
   }
+  Future<dynamic> addPayment() async {
+    var url = Uri.parse('${Utils.baseUrl}addPayment');
+    var response = await http
+        .post(
+      url,
+      body: {"account_id": title, "amount": Amount,"description":Desc,"op_date":openingDateString,"user_id":Utils.USER_ID},
 
+    )
+        .timeout(const Duration(seconds: 60),onTimeout: (){
+      bl.close();
+      return confirmationPopup(context, "Check your Internet Connection!");
+    });
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      dynamic body = jsonDecode(response.body);
+      String status=body['status'];
+      String message=body['message'];
+      if(status=="sucess"){
+
+        Fluttertoast.showToast(
+            msg: message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.SNACKBAR,
+            timeInSecForIosWeb: 1,
+            backgroundColor:MyColors.blue,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+        bl.close();
+        Navigator.pop(context);
+      }
+     else{
+       bl.close();
+       Fluttertoast.showToast(
+           msg: message,
+           toastLength: Toast.LENGTH_SHORT,
+           gravity: ToastGravity.SNACKBAR,
+           timeInSecForIosWeb: 1,
+           backgroundColor:MyColors.blue,
+           textColor: Colors.white,
+           fontSize: 16.0
+       );
+
+      }
+
+
+
+    } else {
+      bl.close();
+      print(response.body);
+
+      String error = "Error Occurred";
+      print(error);
+
+      confirmationPopup(context, error);
+    }
+  }
   confirmationPopup(BuildContext dialogContext, String? error) {
 
     var alertStyle = const AlertStyle(
@@ -383,60 +421,6 @@ class AddJvState extends State<AddJvScreen>{
         ),
       )
     ]).show();
-  }
-  Future<void> addJournal() async {
-
-    var url = Uri.parse('${Utils.baseUrl}addJv');
-    var response = await http.post(url,body: {"user_id":Utils.USER_ID.toString(),"op_date":openingDateString,"description":Desc,"debit":Debit,"credit":Credit,"account_id":title}).timeout(const Duration(seconds: 30),onTimeout: (){
-
-      return confirmationPopup(context, "Check your Internet Connection!");
-    });
-
-
-    if (response.statusCode == 200) {
-      print(response.body);
-      dynamic body = jsonDecode(response.body);
-      String status=body['status'];
-      String message=body['message'];
-      if(status=="sucess"){
-
-        Fluttertoast.showToast(
-            msg: message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.SNACKBAR,
-            timeInSecForIosWeb: 1,
-            backgroundColor:MyColors.blue,
-            textColor: Colors.white,
-            fontSize: 16.0
-        );
-        bl.close();
-        Navigator.pop(context);
-      }
-      else{
-        bl.close();
-        Fluttertoast.showToast(
-            msg: message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.SNACKBAR,
-            timeInSecForIosWeb: 1,
-            backgroundColor:MyColors.blue,
-            textColor: Colors.white,
-            fontSize: 16.0
-        );
-
-      }
-
-
-
-    } else {
-      bl.close();
-      print(response.body);
-
-      String error = "Error Occurred";
-      print(error);
-
-      confirmationPopup(context, error);
-    }
   }
 
 }

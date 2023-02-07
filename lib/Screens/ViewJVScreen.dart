@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:data_table_2/data_table_2.dart';
+
 import 'package:financemanager/Constants.dart';
 import 'package:financemanager/Models/JvModel.dart';
 
@@ -19,6 +19,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:scrollable_table_view/scrollable_table_view.dart';
 
 class ViewJVScreen extends StatefulWidget {
   const ViewJVScreen({super.key});
@@ -186,7 +187,38 @@ class ViewJVState extends State<ViewJVScreen> {
 
           Expanded(
 
-              child: _createDataTable()),
+              child:  ScrollableTableView(
+                columns:[
+
+                  const TableViewColumn(label:'A/C'),
+
+                  const TableViewColumn(label:'Description'),
+
+
+                  const TableViewColumn(label:'Debit'),
+                  const TableViewColumn(label:'Credit'),
+
+
+                ],
+                rows: results.map((book) => TableViewRow(cells: [
+                  TableViewCell(
+                    child: Center(child: Text(book.accountName.toString(),style: TextStyle(color: MyColors.blue))),
+                  ),
+
+                  TableViewCell(
+                    child: Text(book.description.toString()),
+                  ),
+                  TableViewCell(
+                    child: Text(book.debit.toString()),
+                  ),
+                  TableViewCell(
+                    child: Text(book.credit.toString()),
+                  ),
+
+                ])).toList(),
+
+
+              )),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -207,47 +239,7 @@ class ViewJVState extends State<ViewJVScreen> {
     );
   }
 
-  DataTable _createDataTable() {
-    return DataTable2(
-      columns: _createColumns(),
-      rows: _createRows(),
-      columnSpacing: 4,
-      dataRowHeight: 50,
-      horizontalMargin: 5,
-      minWidth: 150,
 
-
-      border: TableBorder.all(color: MyColors.gray),
-      showBottomBorder: true,
-
-      headingTextStyle:
-      const TextStyle(fontWeight: FontWeight.bold, color: Colors.white,),
-      headingRowColor:
-      MaterialStateProperty.resolveWith((states) => MyColors.blue),
-    );
-  }
-
-  List<DataColumn> _createColumns() {
-    return [
-      const DataColumn2(label: Center(child: Text('A/C'))),
-      const DataColumn2(label: Center(child: Text('Description'))),
-      const DataColumn2(label: Center(child: Text('Debit'))),
-      const DataColumn2(label: Center(child: Text('Credit'))),
-
-    ];
-  }
-
-  List<DataRow> _createRows() {
-    return results
-        .map((jv) => DataRow(cells: [
-      DataCell(Center(child: Text(jv.accountName.toString()))),
-      DataCell(Center(child: Text(jv.description.toString()))),
-      DataCell(Center(child: Text(jv.debit.toString()))),
-      DataCell(Center(child: Text(jv.credit.toString()))),
-
-    ]))
-        .toList();
-  }
   Future<void> selectFromDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,

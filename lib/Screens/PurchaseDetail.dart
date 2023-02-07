@@ -9,6 +9,7 @@ import 'package:financemanager/Screens/EditAccountScreen.dart';
 import 'package:financemanager/Utils.dart';
 import 'package:financemanager/widgets/BtnNullHeightWidth.dart';
 import 'package:financemanager/widgets/TextWidget.dart';
+import 'package:financemanager/widgets/Toolbar.dart';
 import 'package:financemanager/widgets/ToolbarImage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -104,9 +105,7 @@ class DetailState extends State<PurchaseDetailScreen> {
   Widget build(BuildContext context) {
     accountModel= ModalRoute.of(context)!.settings.arguments as AccountModel;
     return Scaffold(
-      appBar: ToolbarImage(
-        appBar: AppBar(),
-      ),
+      appBar: ToolbarBack(appBar: AppBar(), title: 'Purchase Invoice',),
       body: Padding(
         padding: const EdgeInsets.all(3.0),
         child: RefreshIndicator(

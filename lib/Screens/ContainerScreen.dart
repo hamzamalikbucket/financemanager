@@ -6,10 +6,12 @@ import 'package:financemanager/Models/AccountModel.dart';
 import 'package:financemanager/Models/ContainerModel.dart';
 import 'package:financemanager/Models/ItemModel.dart';
 import 'package:financemanager/MyColors.dart';
+import 'package:financemanager/Screens/EditContainerScreen.dart';
 import 'package:financemanager/Screens/ExpensesScreen.dart';
 import 'package:financemanager/Utils.dart';
 import 'package:financemanager/widgets/BtnNullHeightWidth.dart';
 import 'package:financemanager/widgets/TextWidget.dart';
+import 'package:financemanager/widgets/Toolbar.dart';
 import 'package:financemanager/widgets/ToolbarImage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +76,7 @@ class ItemState extends State<ContainerScreen>{
 
 
       setState(() {
-
+        items.clear();
         body.forEach((item){
           print(item);
           items.add(ContainerModel.fromJson(item));
@@ -96,7 +98,7 @@ class ItemState extends State<ContainerScreen>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ToolbarImage(appBar: AppBar(),),
+      appBar: ToolbarBack(appBar: AppBar(), title: 'Container',),
       body: Center(
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -119,15 +121,78 @@ class ItemState extends State<ContainerScreen>{
                 itemBuilder: (context, index) {
                   ContainerModel conatinerModel = items[index];
                   return GestureDetector(
-                    /* onTap: (){
-                        Navigator.push(context,
-                          MaterialPageRoute(
-                            builder: (context) => OrderDetail(),
-                            settings: RouteSettings(
-                              arguments: od,
-                            ),
-                          ),);
-                      },*/
+                    onLongPress: (){
+                      showMenu(context: context,  position:RelativeRect.fromLTRB(100, 100, 100, 100),
+                        items:[
+                          PopupMenuItem(
+                            value: "1",
+
+                            child: const Text("Edit"),
+                          ),
+                          PopupMenuItem(
+                            value: "2",
+                            onTap: ()async{
+                              EasyLoading.show(status: "Loading");
+                              var url = Uri.parse(
+                                  '${Utils.baseUrl}deleteContainer');
+                              var response = await http
+                                  .post(url, body: {
+                                "id": conatinerModel.conatinerId
+                              }).timeout(const Duration(seconds: 30),
+                                  onTimeout: () {
+                                    return confirmationPopup(context,
+                                        "Check your Internet Connection!");
+                                  });
+
+                              if (response.statusCode == 200) {
+                                EasyLoading.dismiss();
+                                print(response.body);
+                                dynamic body =
+                                jsonDecode(response.body);
+                                String status = body['status'];
+                                if (status == "success") {
+                                  setState(() {
+                                    items.removeAt(index);
+                                  });
+                                } else {
+                                  String error = body['message'];
+                                  confirmationPopup(context, error);
+                                }
+                              } else {
+                                EasyLoading.dismiss();
+
+                                print(response.statusCode);
+                              }
+                            },
+                            child: Text("Delete"),
+                          ),
+
+                        ],
+
+
+
+                      ).then<void>((String? itemSelected){
+                        if(itemSelected==null){
+                          return null;
+                        }
+                        if(itemSelected =="1"){
+                          Navigator.push(context,
+                            MaterialPageRoute(
+                              builder: (context) => EditContainerScreen(),
+                              settings: RouteSettings(
+                                arguments:
+                                items[index],
+                              ),
+                            ),).then((value) {
+                            initState();
+                          });
+                          //code here
+                        }else{
+                          //code here
+                        }
+
+                      });
+                    },
 
 
                     child: Container(
@@ -149,7 +214,12 @@ class ItemState extends State<ContainerScreen>{
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   TextWidget(
-                                      input: "${conatinerModel.conatinerId!} ${conatinerModel.ContainerName!}",
+                                      input: conatinerModel.conatinerId!,
+                                      fontsize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      textcolor: MyColors.blackColor8),
+                                  TextWidget(
+                                      input: conatinerModel.ContainerName!,
                                       fontsize: 18,
                                       fontWeight: FontWeight.w600,
                                       textcolor: MyColors.blackColor8),

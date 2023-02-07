@@ -49,6 +49,7 @@ class AddPurchaseState extends State<AddPurchaseScreen>{
   TextEditingController totalWeightControllr=TextEditingController();
   TextEditingController lessWeightControllr=TextEditingController();
   TextEditingController netWeightControllr=TextEditingController();
+  TextEditingController totalAmountControllr=TextEditingController();
   int Totalmount=0;
   int netweig=0;
 
@@ -200,7 +201,7 @@ class AddPurchaseState extends State<AddPurchaseScreen>{
   Widget build(BuildContext context) {
     return Scaffold(
 
-      appBar: ToolbarBack(appBar: AppBar(), title: 'Purchase Invoice',),
+      appBar: ToolbarBack(appBar: AppBar(), title: 'Add Purchase Invoice',),
       body: SafeArea(
 
         child: SingleChildScrollView(
@@ -467,12 +468,30 @@ class AddPurchaseState extends State<AddPurchaseScreen>{
                 changevalue: (val){
                   setState(() {
                     Totalmount=int.parse(netWeightControllr.text)*int.parse(val!);
+                    totalAmountControllr.text=Totalmount.toString();
                   }); },
                 width: MediaQuery.of(context).size.width,
                 validate: true,
                 isPassword: false,
                 hintcolour: MyColors.whiteColor),
 
+            Utils.FORM_HINT_PADDING,
+            Utils.FORM_HINT_PADDING,
+            NameInputWidget(
+                title: "Total Amount",
+                error: "Amount",
+                isRequired: true,
+                isenabled: false,
+                controller: totalAmountControllr,
+                icon: Icons.payment,
+                keyboardType: TextInputType.text,
+                value: (val) {
+                  Totalmount= int.parse(val!);
+                },
+                width: MediaQuery.of(context).size.width,
+                validate: true,
+                isPassword: false,
+                hintcolour: MyColors.whiteColor),
             Utils.FORM_HINT_PADDING,
             Utils.FORM_HINT_PADDING,
             NameInputWidget(
@@ -489,6 +508,7 @@ class AddPurchaseState extends State<AddPurchaseScreen>{
                 validate: false,
                 isPassword: false,
                 hintcolour: MyColors.whiteColor),
+
 
             Utils.FORM_HINT_PADDING,
             Row(
@@ -529,28 +549,6 @@ class AddPurchaseState extends State<AddPurchaseScreen>{
 
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextWidget(
-
-                  input: "Total Amount:",
-                  fontsize: 16,
-                  fontWeight: FontWeight.normal,
-                  textcolor: MyColors.blackColor8,
-                ),
-                TextWidget(
-
-                  input: Totalmount.toString(),
-                  fontsize: 16,
-                  fontWeight: FontWeight.normal,
-                  textcolor: MyColors.blue,
-                ),
-              ],
-            ),
-            Utils.FORM_HINT_PADDING,
-
-
             BtnNullHeightWidth(
               title: "Add",
               bgcolour: MyColors.blue,

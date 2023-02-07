@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:data_table_2/data_table_2.dart';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:financemanager/Constants.dart';
 import 'package:financemanager/Models/AccountModel.dart';
 import 'package:financemanager/Models/LedgerModel.dart';
@@ -10,6 +11,8 @@ import 'package:financemanager/Screens/LedgerPdfView.dart';
 import 'package:financemanager/Utils.dart';
 import 'package:financemanager/widgets/LedgerDrawer.dart';
 import 'package:financemanager/widgets/TextWidget.dart';
+import 'package:open_filex/open_filex.dart';
+
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scrollable_table_view/scrollable_table_view.dart';
 
@@ -65,6 +68,8 @@ class LedgerState extends State<LedgerScreen> {
   late bool _permissionReady;
   late TargetPlatform? platform;
   var dio = Dio();
+  late String fileName;
+  String AccountName="";
 
   @override
   void initState() {
@@ -105,6 +110,7 @@ class LedgerState extends State<LedgerScreen> {
       fromdate=variabe['from date'];
       todate=variabe['to date'];
       accountName=variabe['account name'];
+      AccountName=accountName;
       print(accountid);
 
       results.clear();
@@ -150,6 +156,7 @@ class LedgerState extends State<LedgerScreen> {
         totaldebit=body['totalDebit'];
         closingbaacne=body['closingBalance'];
         URL=body['url'];
+        AccountName=body['accountName'];
 
 
 
@@ -197,6 +204,7 @@ class LedgerState extends State<LedgerScreen> {
         totaldebit=body['totalDebit'];
         closingbaacne=body['closingBalance'];
         URL=body['url'];
+        AccountName=body['accountName'];
 
 
 
@@ -245,7 +253,7 @@ class LedgerState extends State<LedgerScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             TextWidget(
-                input: accountName.toString(),
+                input: AccountName.toString(),
                 fontsize: 16,
                 fontWeight: FontWeight.normal,
                 textcolor: MyColors.whiteColor),
@@ -339,7 +347,60 @@ class LedgerState extends State<LedgerScreen> {
             ),
           ),
 
-          Expanded(child: _createDataTable()),
+          Expanded(child: PageStorage(
+            bucket: PageStorageBucket(),
+            child:
+            ScrollableTableView(
+              columns:[
+
+            const TableViewColumn(label:'V No'),
+            const TableViewColumn(label:'Date'),
+            const TableViewColumn(label:'Description'),
+            const TableViewColumn(label:'Total Weight'),
+            const TableViewColumn(label:'Less Weight'),
+            const TableViewColumn(label:'Net Weight'),
+            const TableViewColumn(label:'Rate'),
+            const TableViewColumn(label:'Debit'),
+            const TableViewColumn(label:'Credit'),
+            const TableViewColumn(label:'Balance'),
+
+            ],
+              rows: results.map((book) => TableViewRow(cells: [
+                TableViewCell(
+                  child: Center(child: Text(book.id.toString(),style: TextStyle(color: MyColors.blue))),
+                ),
+                TableViewCell(
+                  child: Text(book.date.toString()),
+                ),
+                TableViewCell(
+                  child: Text(book.description.toString()),
+                ),
+                TableViewCell(
+                  child: Text(book.totalweight.toString()),
+                ),
+                TableViewCell(
+                  child: Text(book.lessweight.toString()),
+                ),
+                TableViewCell(
+                  child: Text(book.netweight.toString()),
+                ),
+                TableViewCell(
+                  child: Text(book.rate.toString()),
+                ),
+                TableViewCell(
+                  child: Text(book.debit.toString()),
+                ),
+                TableViewCell(
+                  child: Text(book.credit.toString()),
+                ),
+                TableViewCell(
+                  child: Text(book.balance.toString()),
+                ),
+              ])).toList(),
+
+
+            ),
+          ),),
         ],
       ),
       bottomSheet: GestureDetector(
@@ -372,7 +433,7 @@ class LedgerState extends State<LedgerScreen> {
 
                     children: [
                       TextWidget(
-                          input: accountName,
+                          input: AccountName,
                           fontsize: 15,
                           fontWeight: FontWeight.w500,
                           textcolor: MyColors.black),
@@ -460,13 +521,14 @@ class LedgerState extends State<LedgerScreen> {
             await _prepareSaveDir();
             print("Downloading");
             try {
-              String fileName = URL.substring(URL.lastIndexOf("/") + 1);
+              fileName = URL.substring(URL.lastIndexOf("/") + 1);
               await Dio().download(URL,
                   _localPath + "/" + fileName);
+             /* fileconfirmationPopup(context,"Choose File ?");*/
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                    'successfully saved to internal storage'+_localPath,
+                    'successfully saved to internal storage Documents with app name',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -485,79 +547,9 @@ class LedgerState extends State<LedgerScreen> {
     );
   }
 
-  ScrollableTableView _createDataTable() {
-    return ScrollableTableView(
-      columns: _createColumns(),
-      rows: _createRows(),
 
 
-    );
 
-
-     /* DataTable2(
-      columns: _createColumns(),
-      rows: _createRows(),
-      columnSpacing: 4,
-      dataRowHeight: 80,
-      horizontalMargin: 5,
-      minWidth: 1000,
-
-
-      border: TableBorder.all(color: MyColors.gray),
-      showBottomBorder: true,
-
-      headingTextStyle:
-          const TextStyle(fontWeight: FontWeight.bold, color: Colors.white,),
-      headingRowColor:
-          MaterialStateProperty.resolveWith((states) => MyColors.blue),
-    );*/
-  }
-
-  List<TableViewColumn> _createColumns() {
-    return [
-
-      const TableViewColumn(label:'V No'),
-      const TableViewColumn(label:'Date'),
-      const TableViewColumn(label:'Description'),
-      const TableViewColumn(label:'Weight'),
-      const TableViewColumn(label:'Rate'),
-      const TableViewColumn(label:'Debit'),
-      const TableViewColumn(label:'Credit'),
-      const TableViewColumn(label:'Balance'),
-
-    ];
-  }
-
-  List<TableViewRow> _createRows() {
-    return results
-        .map((book) => TableViewRow(cells: [
-        TableViewCell(
-        child: Center(child: Text(book.id.toString(),style: TextStyle(color: MyColors.blue))),
-    ),
-        TableViewCell(
-        child: Text(book.date.toString()),
-    ),
-        TableViewCell(
-        child: Text(book.description.toString()),
-    ),
-        TableViewCell(
-        child: Text(book.weight.toString()),
-    ),
-        TableViewCell(
-        child: Text(book.rate.toString()),
-    ),
-        TableViewCell(
-        child: Text(book.debit.toString()),
-    ),
-        TableViewCell(
-        child: Text(book.credit.toString()),
-    ),
-        TableViewCell(
-        child: Text(book.balance.toString()),
-    ),
-    ]))
-        .toList();
-  }
 
   confirmationPopup(BuildContext dialogContext, String? error) {
     var alertStyle = const AlertStyle(
@@ -581,6 +573,40 @@ class LedgerState extends State<LedgerScreen> {
           style: TextStyle(color: Colors.white, fontSize: 18),
         ),
       )
+    ]).show();
+  }
+  fileconfirmationPopup(BuildContext dialogContext, String? error) {
+    var alertStyle = const AlertStyle(
+      animationType: AnimationType.grow,
+      overlayColor: Colors.black87,
+      isCloseButton: true,
+      isOverlayTapDismiss: true,
+      titleStyle: TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
+      descStyle: TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
+      animationDuration: Duration(milliseconds: 400),
+    );
+
+    Alert(context: dialogContext, style: alertStyle, title: error, buttons: [
+      DialogButton(
+        onPressed: () {
+          openFile();
+        },
+        color: MyColors.redColor,
+        child: const Text(
+          "Open File",
+          style: TextStyle(color: Colors.white, fontSize: 18),
+        ),
+      ),
+      DialogButton(
+        onPressed: () {
+          Navigator.pop(dialogContext);
+        },
+        color: MyColors.redColor,
+        child: const Text(
+          "Close",
+          style: TextStyle(color: Colors.white, fontSize: 18),
+        ),
+      ),
     ]).show();
   }
   Future<void> selectFromDate(BuildContext context) async {
@@ -666,13 +692,22 @@ class LedgerState extends State<LedgerScreen> {
 
   Future<String?> _findLocalPath() async {
     if (platform == TargetPlatform.android) {
-      return "/sdcard/download/";
+      return "/storage/emulated/0/Documents/logopk/";
     } else {
       var directory = await getTemporaryDirectory();
       return directory.path + Platform.pathSeparator + 'Download';
     }
   }
+  Future<void> openFile() async {
+   String? filePath = '/storage/emulated/0/Documents/logopk/';
+    final result = await OpenFilex.open(filePath);
 
+
+
+    setState(() {
+
+    });
+  }
 
 
 

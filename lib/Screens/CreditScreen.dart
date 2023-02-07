@@ -5,10 +5,11 @@ import 'package:financemanager/Constants.dart';
 
 import 'package:financemanager/Models/RecieptModel.dart';
 import 'package:financemanager/MyColors.dart';
+import 'package:financemanager/Screens/EditCreditScreen.dart';
 import 'package:financemanager/Utils.dart';
 
 import 'package:financemanager/widgets/TextWidget.dart';
-import 'package:financemanager/widgets/ToolbarImage.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -17,7 +18,7 @@ import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 
-class ReceiptScreen extends StatefulWidget{
+class CreditScreen extends StatefulWidget{
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -26,8 +27,9 @@ class ReceiptScreen extends StatefulWidget{
 
 
 }
-class RecieptState extends State<ReceiptScreen>{
+class RecieptState extends State<CreditScreen>{
   List<RecieptModel>rpayy=[];
+  List<RecieptModel>_foundUsers=[];
   TextEditingController FromController = TextEditingController();
   DateTime openingdate = DateTime.now();
   String OpeningDate="";
@@ -60,6 +62,24 @@ class RecieptState extends State<ReceiptScreen>{
 
 
   }
+  void _runFilter(String enteredKeyword) {
+    List<RecieptModel> results = [];
+    if (enteredKeyword.isEmpty) {
+      // if the search field is empty or only contains white-space, we'll display all users
+      results = rpayy;
+    } else {
+      results = rpayy
+          .where((user) =>
+      user.AccountTitle.toLowerCase().contains(enteredKeyword.toLowerCase())||user.Amount.contains(enteredKeyword.toString())||user.Date.contains(enteredKeyword.toString()))
+          .toList();
+      // we use the toLowerCase() method to make it case-insensitive
+    }
+
+    // Refresh the UI
+    setState(() {
+      _foundUsers = results;
+    });
+  }
   Future<void> getPaymentList() async {
 
     var url = Uri.parse('${Utils.baseUrl}getReciept');
@@ -75,10 +95,12 @@ class RecieptState extends State<ReceiptScreen>{
 
 
       setState(() {
+        rpayy.clear();
 
         body.forEach((item){
           print(item);
           rpayy.add(RecieptModel.fromJson(item));
+          _foundUsers=rpayy;
 
         });
       });
@@ -97,7 +119,22 @@ class RecieptState extends State<ReceiptScreen>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ToolbarImage(appBar: AppBar(),),
+      appBar:AppBar(
+        title: Column(
+          children: [
+            TextField(
+
+              onChanged: (value) => _runFilter(value),
+              style: TextStyle(color: Colors.white),
+              showCursor: true,
+              decoration: const InputDecoration(
+
+                  labelText: 'Search-Date-Name-Amount',labelStyle: TextStyle(color: Colors.white), suffixIcon: Icon(Icons.search,color: Colors.white,)),
+            ),
+          ],
+        ),
+
+      ),
       body: Center(
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -107,103 +144,90 @@ class RecieptState extends State<ReceiptScreen>{
             padding: const EdgeInsets.all(3.0),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left:12.0,right:12.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      TextWidget(
 
-                        input: "From",
-                        fontsize: 16,
-                        fontWeight: FontWeight.normal,
-                        textcolor: MyColors.blackColor8,
-                      ),
-                      SizedBox(
-                        width: 100,
-                        child: TextField(
-                          controller: FromController,
-                          onTap: () async{
-                            FocusScope.of(context).requestFocus(FocusNode());
-                            await selectFromDate(context);
-                            FromController.text = DateFormat('dd-MM-yyyy').format(openingdate);
-                          },
-                          onChanged: (String value){
-                            OpeningDate=value;
-                          },
-                          style:TextStyle(color: MyColors.blue) ,
-
-                          decoration:InputDecoration(
-                            border: InputBorder.none,
-                            hintText:"${openingdate.day}-${openingdate.month}-${openingdate.year}",
-                            hintStyle: TextStyle(color: MyColors.blue),
-
-                          ),
-                        ),
-                      ),
-                      TextWidget(
-
-                        input: "To",
-                        fontsize: 16,
-                        fontWeight: FontWeight.normal,
-                        textcolor: MyColors.blackColor8,
-                      ),
-                      SizedBox(
-                        width: 100,
-                        child: TextField(
-                          controller: ToController,
-                          onTap: () async{
-                            FocusScope.of(context).requestFocus(FocusNode());
-                            await selectToDate(context);
-                            ToController.text = DateFormat('dd-MM-yyyy').format(openingdate);
-                          },
-                          onChanged: (String value){
-                            ClosingDate=value;
-                          },
-                          style:TextStyle(color: MyColors.blue) ,
-
-                          decoration:InputDecoration(
-                            border: InputBorder.none,
-                            hintText:"${closingdate.day}-${closingdate.month}-${closingdate.year}",
-                            hintStyle: TextStyle(color: MyColors.blue),
-
-                          ),
-                        ),
-                      ),
-                      IconButton(onPressed: (){
-                        setState(() {
-                          rpayy.clear();
-                          initState();
-
-
-                        });
-
-
-                      }, icon:Icon(Icons.refresh,color: MyColors.blue,))
-
-                    ],
-                  ),
-                ),
                 Expanded(
 
-                  child: rpayy.isNotEmpty?ListView.builder(
-                    itemCount: rpayy.length,
+                  child: _foundUsers.isNotEmpty?ListView.builder(
+                    itemCount: _foundUsers.length,
                     addRepaintBoundaries: true,
                     scrollDirection:Axis.vertical,
                     shrinkWrap: false,
                     physics: AlwaysScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
-                      RecieptModel reciptmodel = rpayy[index];
+                      RecieptModel reciptmodel =_foundUsers[index];
                       return GestureDetector(
-                        /* onTap: (){
-                            Navigator.push(context,
-                              MaterialPageRoute(
-                                builder: (context) => OrderDetail(),
-                                settings: RouteSettings(
-                                  arguments: od,
-                                ),
-                              ),);
-                          },*/
+                        onLongPress: (){
+                          showMenu(context: context,  position:RelativeRect.fromLTRB(100, 100, 100, 100),
+                            items:[
+                              PopupMenuItem(
+                                value: "1",
+
+                                child: const Text("Edit"),
+                              ),
+                              PopupMenuItem(
+                                value: "2",
+                                onTap: ()async{
+                                  EasyLoading.show(status: "Loading");
+                                  var url = Uri.parse(
+                                      '${Utils.baseUrl}deletePayment');
+                                  var response = await http
+                                      .post(url, body: {
+                                    "id": reciptmodel.ReceiptId
+                                  }).timeout(const Duration(seconds: 30),
+                                      onTimeout: () {
+                                        return confirmationPopup(context,
+                                            "Check your Internet Connection!");
+                                      });
+
+                                  if (response.statusCode == 200) {
+                                    EasyLoading.dismiss();
+                                    print(response.body);
+                                    dynamic body =
+                                    jsonDecode(response.body);
+                                    String status = body['status'];
+                                    if (status == "success") {
+                                      setState(() {
+                                        _foundUsers.removeAt(index);
+                                      });
+                                    } else {
+                                      String error = body['message'];
+                                      confirmationPopup(context, error);
+                                    }
+                                  } else {
+                                    EasyLoading.dismiss();
+
+                                    print(response.statusCode);
+                                  }
+                                },
+                                child: Text("Delete"),
+                              ),
+
+                            ],
+
+
+
+                          ).then<void>((String? itemSelected){
+                            if(itemSelected==null){
+                              return null;
+                            }
+                            if(itemSelected =="1"){
+                              Navigator.push(context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditCreditScreen(),
+                                  settings: RouteSettings(
+                                    arguments:
+                                    _foundUsers[index],
+                                  ),
+                                ),).then((value) {
+                                initState();
+                              });
+                              //code here
+                            }else{
+                              //code here
+                            }
+
+                          });
+                        },
 
 
                         child: Container(

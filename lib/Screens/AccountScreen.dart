@@ -285,8 +285,8 @@ class AccountState extends State<AccountScreen> {
                               backgroundColor: MyColors.orangeColor,
                               child:  TextWidget(
                                   input: accountmodle.Title![0].toUpperCase(),
-                                  fontsize: 20,
-                                  fontWeight: FontWeight.w300,
+                                  fontsize: 30,
+                                  fontWeight: FontWeight.w600,
                                   textcolor: MyColors.whiteColor),
 
                             ),
@@ -295,13 +295,13 @@ class AccountState extends State<AccountScreen> {
                               children: [
                                 TextWidget(
                                     input: accountmodle.Title!,
-                                    fontsize: 20,
+                                    fontsize: 30,
                                     fontWeight: FontWeight.w800,
                                     textcolor: MyColors.blackColor8),
                                 TextWidget(
                                     input: "Balance:" +
                                         accountmodle.OpeningBalance!,
-                                    fontsize: 10,
+                                    fontsize: 15,
                                     fontWeight: FontWeight.normal,
                                     textcolor: MyColors.blackColor8),
 

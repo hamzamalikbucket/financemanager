@@ -61,65 +61,23 @@ class EditPayState extends State<EditPaymentScreen>{
             fontSize: 19.0,
             fontWeight: FontWeight.w600));
 
-    EasyLoading.show(
-        status: "Loading"
-
-    );
 
 
 
-    setState(() {
 
 
-      try{
-        getAccountList();
-      }catch (e){
-        confirmationPopup(context, "An error Occurred.Try again later!");
-
-      }
-
-    });
 
 
 
   }
-  Future<void> getAccountList() async {
 
-    var url = Uri.parse('${Utils.baseUrl}getAccounts');
-    var response = await http.post(url,body: {"gid":Utils.USER_ID.toString()}).timeout(const Duration(seconds: 30),onTimeout: (){
-
-      return confirmationPopup(context, "Check your Internet Connection!");
-    });
-
-    if (response.statusCode == 200) {
-      EasyLoading.dismiss();
-      print(response.body);
-      dynamic body = jsonDecode(response.body);
-
-
-      setState(() {
-
-        body.forEach((item){
-          print(item);
-          account.add(AccountModel.fromJson(item));
-
-        });
-      });
-
-
-
-
-    } else {
-      EasyLoading.dismiss();
-
-      print(response.statusCode);
-
-
-    }
-  }
   @override
   Widget build(BuildContext context) {
     paymentmodel= ModalRoute.of(context)!.settings.arguments as PaymentModel;
+    setState(() {
+      title=paymentmodel.AccountId;
+    });
+
     return Scaffold(
 
       appBar: ToolbarBack(appBar: AppBar(), title: paymentmodel.AccountTitle!,),
@@ -150,58 +108,21 @@ class EditPayState extends State<EditPaymentScreen>{
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            SizedBox(
+            NameInputWidget(
+                initialval: paymentmodel.AccountTitle!,
+                title: "Account",
+                error: "Enter account",
+                isRequired: true,
+                isenabled: false,
+                icon: Icons.payment,
+                keyboardType: TextInputType.text,
+                value: (val) {
 
-              child: DropdownButtonHideUnderline(
-                child:
-                DropdownButtonFormField(
-
-                  value: title,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: MyColors.views_btn,
-                    contentPadding: EdgeInsets.all(10),
-                    border: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 0.0,
-                          style: BorderStyle.none),
-                      borderRadius:
-                      BorderRadius.all(
-                          Radius.circular(13.0)),
-                    ),
-                  ),
-                  iconSize: 20,
-                  hint: const Text("A/C Title"),
-                  iconEnabledColor: MyColors.blue,
-                  validator: (value) => value == null
-                      ? 'Choose Account Title'
-                      : null,
-                  style: TextStyle(
-                      color: MyColors.blue,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600),
-                  isDense: true,
-
-
-                  items: account.map((item) {
-                    return DropdownMenuItem(
-                      value:item.AccountId.toString(),
-                      child: Text(
-                        item.Title.toString(),
-                        style: const TextStyle(
-                          fontSize: 14,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    setState(() {
-                      title= newValue;
-                    });
-                  },
-                ),
-              ),
-            ),
+                },
+                width: MediaQuery.of(context).size.width,
+                validate: true,
+                isPassword: false,
+                hintcolour: MyColors.whiteColor),
 
             Utils.FORM_HINT_PADDING,
             Utils.FORM_HINT_PADDING,
@@ -267,7 +188,7 @@ class EditPayState extends State<EditPaymentScreen>{
 
                     decoration:InputDecoration(
                       border: InputBorder.none,
-                      hintText:openingDate.year.toString()+"-"+openingDate.month.toString()+"-"+openingDate.day.toString(),
+                      hintText:openingDate.day.toString()+"-"+openingDate.month.toString()+"-"+openingDate.year.toString(),
                       hintStyle: TextStyle(color: MyColors.blue),
 
 
@@ -363,7 +284,7 @@ class EditPayState extends State<EditPaymentScreen>{
       dynamic body = jsonDecode(response.body);
       String status=body['status'];
       String message=body['message'];
-      if(status=="success"){
+      if(status=="sucess"){
 
         Fluttertoast.showToast(
             msg: message,

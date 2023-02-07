@@ -1,8 +1,6 @@
 import 'dart:convert';
 
-import 'package:bottom_loader/bottom_loader.dart';
-import 'package:financemanager/Constants.dart';
-import 'package:financemanager/Models/AccountModel.dart';
+import 'package:financemanager/Constants.dart;
 
 import 'package:financemanager/Models/PaymentModel.dart';
 import 'package:financemanager/MyColors.dart';
@@ -10,8 +8,7 @@ import 'package:financemanager/Screens/EditPaymentScreen.dart';
 import 'package:financemanager/Utils.dart';
 
 import 'package:financemanager/widgets/TextWidget.dart';
-import 'package:financemanager/widgets/Toolbar.dart';
-import 'package:financemanager/widgets/ToolbarImage.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -19,7 +16,7 @@ import 'package:http/http.dart'as http;
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
-class PaymentScreen extends StatefulWidget{
+class DebitScreen extends StatefulWidget{
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -28,7 +25,7 @@ class PaymentScreen extends StatefulWidget{
 
 
 }
-class PaymentState extends State<PaymentScreen>{
+class PaymentState extends State<DebitScreen>{
   List<PaymentModel>payy=[];
   List<PaymentModel> _foundUsers=[];
   TextEditingController FromController = TextEditingController();
@@ -38,13 +35,7 @@ class PaymentState extends State<PaymentScreen>{
   DateTime closingdate = DateTime.now();
   String ClosingDate="";
 
-  Offset _tapPosition = Offset.zero;
-  void _getTapPosition(TapDownDetails details) {
-    final RenderBox referenceBox = context.findRenderObject() as RenderBox;
-    setState(() {
-      _tapPosition = referenceBox.globalToLocal(details.globalPosition);
-    });
-  }
+
   RelativeRect _getRelativeRect(GlobalKey key){
     return RelativeRect.fromSize(
         _getWidgetGlobalRect(key), const Size(200, 200));
@@ -120,6 +111,8 @@ class PaymentState extends State<PaymentScreen>{
 
 
       setState(() {
+        payy.clear();
+
 
         body.forEach((item){
           print(item);
@@ -262,7 +255,8 @@ class PaymentState extends State<PaymentScreen>{
                       physics: AlwaysScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         PaymentModel paymodel = _foundUsers[index];
-                        return GestureDetector(
+                        return
+                          GestureDetector(
 
                           onLongPress: (){
                             showMenu(context: context,  position:RelativeRect.fromLTRB(100, 100, 100, 100),
@@ -323,9 +317,12 @@ class PaymentState extends State<PaymentScreen>{
                                   MaterialPageRoute(
                                     builder: (context) => EditPaymentScreen(),
                                     settings: RouteSettings(
-                                      arguments: payy[index],
+                                      arguments:
+                                        payy[index],
                                     ),
-                                  ),);
+                                  ),).then((value) {
+                                    initState();
+                                });
                                 //code here
                               }else{
                                 //code here

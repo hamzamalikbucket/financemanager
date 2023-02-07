@@ -5,7 +5,7 @@ import 'package:financemanager/Models/AccountModel.dart';
 import 'package:financemanager/MyColors.dart';
 import 'package:financemanager/Utils.dart';
 import 'package:financemanager/widgets/BtnNullHeightWidth.dart';
-import 'package:financemanager/widgets/EmailInputWidget.dart';
+
 import 'package:financemanager/widgets/NameInputWidget.dart';
 import 'package:financemanager/widgets/TextWidget.dart';
 import 'package:financemanager/widgets/Toolbar.dart';
@@ -14,32 +14,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart'as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 import '../Constants.dart';
+import 'package:intl/intl.dart';
+import 'package:http/http.dart'as http;
 
-class AddPaymentScreen extends StatefulWidget{
+class AddCreditScreen extends StatefulWidget{
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return AddPayState();
+    return AddRecState();
   }
 
 
 }
-class AddPayState extends State<AddPaymentScreen>{
-  final GlobalKey<FormState> PayKey = GlobalKey<FormState>();
-
-  late String  Amount,Desc,Date;
+class AddRecState extends State<AddCreditScreen>{
+  final GlobalKey<FormState> RecieptKey = GlobalKey<FormState>();
+  late String Title, Amount,desc,Date;
   TextEditingController FromController = TextEditingController();
-  DateTime openingDate = DateTime.now();
-  String openingDateString="";
-   var title;
-  late BottomLoader bl;
-
+  DateTime openingdate = DateTime.now();
+  String OpeningDate="";
   List<AccountModel>account=[];
-
+  late BottomLoader bl;
+  var title;
   @override
   void initState() {
     // TODO: implement initState
@@ -117,22 +115,25 @@ class AddPayState extends State<AddPaymentScreen>{
   Widget build(BuildContext context) {
     return Scaffold(
 
-      appBar: ToolbarBack(appBar: AppBar(), title: 'New Payment',),
+
+      appBar: ToolbarBack(appBar: AppBar(), title: 'Credit',),
       body: SafeArea(
 
-        child: Padding(
-          padding: const EdgeInsets.all(Utils.APP_PADDING),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(Utils.APP_PADDING),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
 
-              form(context),
+                form(context),
 
 
 
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -140,7 +141,7 @@ class AddPayState extends State<AddPaymentScreen>{
   }
   Widget form(BuildContext context) {
     return Form(
-        key: PayKey,
+        key: RecieptKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -173,7 +174,7 @@ class AddPayState extends State<AddPaymentScreen>{
                   style: TextStyle(
                       color: MyColors.blue,
                       fontSize: 14,
-                  fontWeight: FontWeight.w600),
+                      fontWeight: FontWeight.w600),
                   isDense: true,
 
 
@@ -222,8 +223,7 @@ class AddPayState extends State<AddPaymentScreen>{
                 icon: Icons.description,
                 keyboardType: TextInputType.text,
                 value: (val) {
-
-                  Desc = val!;
+                  desc = val!;
                 },
                 width: MediaQuery.of(context).size.width,
                 validate: false,
@@ -250,16 +250,16 @@ class AddPayState extends State<AddPaymentScreen>{
                     controller: FromController,
                     onTap: () async{
                       FocusScope.of(context).requestFocus(new FocusNode());
-                      await selectfromdate(context);
-                      FromController.text = DateFormat('dd-MM-yyyy').format(openingDate);
+                      await selectDateFunction(context);
+                      FromController.text = DateFormat('dd-MM-yyyy').format(openingdate);
                     },
                     onChanged: (String value){
-                      openingDateString=value;
+                      OpeningDate=value;
                     },
 
                     decoration:InputDecoration(
                       border: InputBorder.none,
-                      hintText:openingDate.year.toString()+"-"+openingDate.month.toString()+"-"+openingDate.day.toString(),
+                      hintText:"${openingdate.day}-${openingdate.month}-${openingdate.year}",
                       hintStyle: TextStyle(color: MyColors.blue),
 
 
@@ -277,28 +277,25 @@ class AddPayState extends State<AddPaymentScreen>{
               bgcolour: MyColors.blue,
               textcolour: MyColors.whiteColor,
               onPress: () {
-                //(is_teacher)?Navigator.pushReplacementNamed(context, Constants.signup_page),
-                final form = PayKey.currentState;
+
+                final form = RecieptKey.currentState;
                 form!.save();
                 if (form.validate()) {
-                  print(title);
                   bl.display();
-                  if(Desc.isEmpty){
+                  if(desc.isEmpty){
                     setState(() {
-                      Desc=" no description Added";
+                      desc=" no description Added";
                     });
                   }
-                  if(openingDateString.isEmpty){
+                  if(OpeningDate.isEmpty){
                     setState(() {
                       DateFormat formatter = DateFormat('dd-MM-yyyy');
-                      openingDateString = formatter.format(openingDate).toString();
+                      OpeningDate = formatter.format(openingdate).toString();
+                      print(OpeningDate.toString());
 
                     });
 
                   }
-                  print(openingDateString);
-                  print(Desc);
-
 
                   try{
                     addPayment();
@@ -308,41 +305,22 @@ class AddPayState extends State<AddPaymentScreen>{
                   }
 
 
-
                 }
               },
               width: MediaQuery.of(context).size.width,
               height: 48,
             ),
-            Utils.FORM_HINT_PADDING,
-            Utils.FORM_HINT_PADDING,
+
 
           ],
         ));
   }
-  Future<void> selectfromdate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: openingDate,
-        firstDate: DateTime(2000, 8),
-        lastDate: DateTime(2500));
-    if (picked != null && picked != openingDate) {
-      setState(() {
-        openingDate = picked;
-        DateFormat formatter = DateFormat('dd-MM-yyyy');
-        openingDateString = formatter.format(openingDate);
-
-
-      });
-    }
-
-  }
   Future<dynamic> addPayment() async {
-    var url = Uri.parse('${Utils.baseUrl}addPayment');
+    var url = Uri.parse('${Utils.baseUrl}addReciept');
     var response = await http
         .post(
       url,
-      body: {"account_id": title, "amount": Amount,"description":Desc,"op_date":openingDateString,"user_id":Utils.USER_ID},
+      body: {"account_id": title, "amount": Amount,"description":desc,"op_date":OpeningDate,"user_id":Utils.USER_ID},
 
     )
         .timeout(const Duration(seconds: 60),onTimeout: (){
@@ -369,17 +347,17 @@ class AddPayState extends State<AddPaymentScreen>{
         bl.close();
         Navigator.pop(context);
       }
-     else{
-       bl.close();
-       Fluttertoast.showToast(
-           msg: message,
-           toastLength: Toast.LENGTH_SHORT,
-           gravity: ToastGravity.SNACKBAR,
-           timeInSecForIosWeb: 1,
-           backgroundColor:MyColors.blue,
-           textColor: Colors.white,
-           fontSize: 16.0
-       );
+      else{
+        bl.close();
+        Fluttertoast.showToast(
+            msg: message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.SNACKBAR,
+            timeInSecForIosWeb: 1,
+            backgroundColor:MyColors.blue,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
 
       }
 
@@ -393,6 +371,22 @@ class AddPayState extends State<AddPaymentScreen>{
       print(error);
 
       confirmationPopup(context, error);
+    }
+  }
+  Future<void> selectDateFunction(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: openingdate,
+        firstDate: DateTime(2000, 8),
+        lastDate: DateTime(2500));
+    if (picked != null && picked != openingdate) {
+      setState(() {
+        openingdate = picked;
+        DateFormat formatter = DateFormat('dd-MM-yyyy');
+        OpeningDate = formatter.format(openingdate);
+
+
+      });
     }
   }
   confirmationPopup(BuildContext dialogContext, String? error) {

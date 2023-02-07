@@ -1,10 +1,10 @@
-import 'package:financemanager/MyColors.dart';
+
 import 'package:financemanager/Screens/AccountScreen.dart';
 import 'package:financemanager/Screens/AddAccountScreen.dart';
 import 'package:financemanager/Screens/AddExpensesScreen.dart';
 import 'package:financemanager/Screens/AddItemScreen.dart';
 import 'package:financemanager/Screens/AddJvScreen.dart';
-import 'package:financemanager/Screens/AddPaymentScreen.dart';
+import 'package:financemanager/Screens/AddDebitScreen.dart';
 import 'package:financemanager/Screens/AddPurchaseScreen.dart';
 import 'package:financemanager/Screens/AddSaleScreen.dart';
 import 'package:financemanager/Screens/EditAccountScreen.dart';
@@ -12,9 +12,9 @@ import 'package:financemanager/Screens/HomeScreen.dart';
 import 'package:financemanager/Screens/ItemScreen.dart';
 import 'package:financemanager/Screens/JournalVoucherScreen.dart';
 import 'package:financemanager/Screens/OtherExpenesScreen.dart';
-import 'package:financemanager/Screens/PaymentScreen.dart';
+import 'package:financemanager/Screens/DebitScreen.dart';
 import 'package:financemanager/Screens/PurchaseDetail.dart';
-import 'package:financemanager/Screens/ReceiptScreen.dart';
+import 'package:financemanager/Screens/CreditScreen.dart';
 import 'package:financemanager/Screens/SaleScreen.dart';
 import 'package:financemanager/Screens/ViewJVScreen.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +22,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import 'Constants.dart';
 import 'Screens/AddContainerScreen.dart';
-import 'Screens/AddRecieptScreen.dart';
+import 'Screens/AddCreditScreen.dart';
 import 'Screens/ContainerScreen.dart';
 import 'Screens/ExpensesScreen.dart';
 import 'Screens/LedgerScreen.dart';
@@ -82,10 +82,10 @@ class MyApp extends StatelessWidget {
           Constants.AccountScreen: (context) =>AccountScreen(),
           Constants.AddAccountScreen: (context) =>AddAccountScreen(),
           Constants.editAccount: (context) =>EditAccountScreen(),
-          Constants.PaymentScreen: (context) =>PaymentScreen(),
-          Constants.addPaymentScreen: (context) =>AddPaymentScreen(),
-          Constants.recieptScreen: (context) =>ReceiptScreen(),
-          Constants.addReceiptScreen: (context) =>AddReceiptScreen(),
+          Constants.PaymentScreen: (context) =>DebitScreen(),
+          Constants.addPaymentScreen: (context) =>AddDebitScreen(),
+          Constants.recieptScreen: (context) =>CreditScreen(),
+          Constants.addReceiptScreen: (context) =>AddCreditScreen(),
           Constants.itemScreen: (context) =>ItemScreen(),
           Constants.addItemScreen: (context) =>AddItemScreen(),
           Constants.ledgerScreen: (context) =>const LedgerScreen(),

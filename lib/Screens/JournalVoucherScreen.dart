@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:data_table_2/data_table_2.dart';
 import 'package:financemanager/Constants.dart';
 import 'package:financemanager/Models/JvModel.dart';
 
@@ -16,6 +15,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart'as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:scrollable_table_view/scrollable_table_view.dart';
 
 class JournalVoucherScreen extends StatefulWidget {
   const JournalVoucherScreen({super.key});
@@ -159,7 +159,7 @@ class JVState extends State<JournalVoucherScreen> {
                     onTap: () async{
                       FocusScope.of(context).requestFocus(FocusNode());
                       await selectToDate(context);
-                      ToController.text = DateFormat('dd-MM-yyyy').format(openingdate);
+                      ToController.text = DateFormat('dd-MM-yyyy').format(closingdate);
                     },
                     onChanged: (String value){
                       ClosingDate=value;
@@ -191,7 +191,37 @@ class JVState extends State<JournalVoucherScreen> {
 
           Expanded(
 
-              child: _createDataTable()),
+              child: ScrollableTableView(
+                columns:const [
+
+                  TableViewColumn(
+                    minWidth: 140,
+                      labelFontSize: 20,
+                      label:'ID'),
+
+                  TableViewColumn(labelFontSize: 20,label:'Date'),
+
+                  TableViewColumn(labelFontSize: 20,label:'Total Debit'),
+
+                ],
+                rows:jVList.map((book) => TableViewRow(cells: [
+
+                  TableViewCell(
+                    child: Center(child: Text("#${book.id}",style: TextStyle(color: MyColors.blue))),
+                  ),
+
+                  TableViewCell(
+                    child: Text(book.date.toString()),
+                  ),
+
+                  TableViewCell(
+                    child: Text(book.debit.toString()),
+                  ),
+
+                ])).toList(),
+
+
+              )),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -211,45 +241,8 @@ class JVState extends State<JournalVoucherScreen> {
     );
   }
 
-  DataTable _createDataTable() {
-    return DataTable2(
-      columns: _createColumns(),
-      rows: _createRows(),
-      columnSpacing: 4,
-      dataRowHeight: 50,
-      horizontalMargin: 5,
-      minWidth: 50,
 
 
-      border: TableBorder.all(color: MyColors.gray),
-      showBottomBorder: true,
-
-      headingTextStyle:
-      const TextStyle(fontWeight: FontWeight.bold, color: Colors.white,),
-      headingRowColor:
-      MaterialStateProperty.resolveWith((states) => MyColors.blue),
-    );
-  }
-
-  List<DataColumn> _createColumns() {
-    return [
-      const DataColumn2(label: Center(child: Text('ID'))),
-      const DataColumn2(label: Center(child: Text('Date'))),
-      const DataColumn2(label: Center(child: Text('Total Debit'))),
-
-    ];
-  }
-
-  List<DataRow> _createRows() {
-    return jVList
-        .map((jv) => DataRow(cells: [
-      DataCell(Center(child: Text('#${jv.id}'))),
-      DataCell(Center(child: Text(jv.date.toString()))),
-      DataCell(Center(child: Text(jv.debit.toString()))),
-
-    ]))
-        .toList();
-  }
   Future<void> selectFromDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,

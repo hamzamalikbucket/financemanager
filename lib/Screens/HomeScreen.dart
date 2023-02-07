@@ -708,7 +708,7 @@ class HomeState extends State<HomeScreen> {
                             children: <Widget>[
                               Utils.FORM_HINT_PADDING,
                               TextWidget(
-                                  input: "Payment",
+                                  input: "Debit",
                                   fontsize: 16,
                                   fontWeight: FontWeight.w700,
                                   textcolor: MyColors.whiteColor),
@@ -746,7 +746,7 @@ class HomeState extends State<HomeScreen> {
                             children: <Widget>[
                               Utils.FORM_HINT_PADDING,
                               TextWidget(
-                                  input: "Receipt",
+                                  input: "Credit",
                                   fontsize: 16,
                                   fontWeight: FontWeight.w700,
                                   textcolor: MyColors.whiteColor),
@@ -1332,7 +1332,7 @@ class HomeState extends State<HomeScreen> {
                         settings: RouteSettings(
                           arguments: {
                             "id": title,
-                            "account name": "test",
+                            "account name": "",
                             "from date": OpeningDate,
                             "to date": ClosingDate,
                           },
@@ -1516,7 +1516,7 @@ class HomeState extends State<HomeScreen> {
 
   Future<String?> _findLocalPath() async {
     if (platform == TargetPlatform.android) {
-      return "/sdcard/download/";
+      return "/storage/emulated/0/Documents/logopk/";
     } else {
       var directory = await getTemporaryDirectory();
       return directory.path + Platform.pathSeparator + 'Download';
