@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:financemanager/Constants.dart;
 
+import 'package:financemanager/Constants.dart';
 import 'package:financemanager/Models/PaymentModel.dart';
 import 'package:financemanager/MyColors.dart';
 import 'package:financemanager/Screens/EditPaymentScreen.dart';
@@ -35,7 +35,13 @@ class PaymentState extends State<DebitScreen>{
   DateTime closingdate = DateTime.now();
   String ClosingDate="";
 
-
+  Offset _tapPosition = Offset.zero;
+  void _getTapPosition(TapDownDetails details) {
+    final RenderBox referenceBox = context.findRenderObject() as RenderBox;
+    setState(() {
+      _tapPosition = referenceBox.globalToLocal(details.globalPosition);
+    });
+  }
   RelativeRect _getRelativeRect(GlobalKey key){
     return RelativeRect.fromSize(
         _getWidgetGlobalRect(key), const Size(200, 200));
